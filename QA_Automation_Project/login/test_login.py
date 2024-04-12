@@ -8,8 +8,8 @@ class LoginTest(BaseCase):
         self.maximize_window()
 
         # Find the username and password input fields and enter credentials
-        self.type("#session_username", "admin")
-        self.type("#session_password", "admin")
+        self.type("#session_username", "username")
+        self.type("#session_password", "password")
 
         # # Click on the login button
         self.click('input[type="submit"]')
