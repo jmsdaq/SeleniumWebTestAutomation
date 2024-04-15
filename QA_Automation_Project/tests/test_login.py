@@ -71,6 +71,17 @@ class LoginTest(HomePage):
 
         time.sleep(10)
 
+    
+
+    def test_valid_login(self):
+        # Now, let's wait for the pop-up message element to appear
+        self.wait_for_element_visible(".toast-body", timeout=10)
+        
+        # After the pop-up message appears, verify its text content
+        toast_body = self.get_text(".toast-body")
+        expected_message = "Hola Admin!"
+        self.assert_equal(toast_body.strip(), expected_message, f"Expected message: '{expected_message}', Actual message: '{toast_body}'")
+
         
 
 if __name__ == "__main__":
