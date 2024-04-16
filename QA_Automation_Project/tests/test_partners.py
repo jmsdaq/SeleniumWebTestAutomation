@@ -1,10 +1,10 @@
 from seleniumbase import BaseCase
 from page_objects.partner_accs import PartnersPage
 from page_objects.home_page import HomePage
-from faker import Faker
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
+from faker import Faker
 import random
 import string
 import csv
@@ -28,37 +28,102 @@ class PartnersTest(HomePage, PartnersPage):
         current_url = self.get_current_url() # Get current URL
         self.assert_equal(current_url, self.PARTNER_URL) # Assert current URL matches PARTNER_URL
         self.assert_true("partner/accounts" in current_url) # Assert current URL contains "partner/accounts"
+        self.assert_text("Partner Accounts", self.PARTNER_ACCOUNT_TITLE)
+        self.assert_text("Show", self.SHOW_TITLE) 
+        self.assert_text("Search:", self.SEARCH_LABEL)
+        self.assert_element(self.SEARCH_INPUT)
+        self.assert_element_visible(self.PARTNER_ACCOUNT_TABLE, timeout=10)
 
+        # Assert the presence of table headers
+        self.assert_text("#", self.NUM_COL)
+        self.assert_text("Name", self.NAME_COL) 
+        self.assert_text("Company", self.COMPANY_COL)
+        self.assert_text("Status", self.STATUS_COL)
+        self.assert_text("Created On", self.CREATED_ON_COL)
+
+    def test_sorting(self):
+        from seleniumbase import BaseCase
+
+    def test_th_sorting(self):
+        # Define the column headers to sort and their expected sorting behavior
+        # Define the column headers to sort and their expected sorting behavior
+        columns_to_sort = [
+            {"index": 3, "name": "Account ID", "expected_sort": "ascending"},
+            {"index": 4, "name": "Company", "expected_sort": "ascending"},
+            {"index": 5, "name": "Status", "expected_sort": "ascending"},
+            {"index": 6, "name": "Created On", "expected_sort": "ascending"}
+        ]
+
+        for column in columns_to_sort:
+            # Click on the sorting button for the specified column
+            column_sort_button = f"//*[@id='partner-account-table']/thead/tr/th[{column['index']}]"
+            self.click(column_sort_button)
+
+            # Wait for the table content to refresh after sorting
+            self.wait_for_element_present("#partner-account-table tbody tr")
+            table_rows = self.find_elements("#partner-account-table tbody tr")
+
+            # Extract the values from the specified column after sorting
+            column_values_after_sorting = []
+            for row in table_rows:
+                try:
+                    # Locate the table cell (td) within the current row (tr) using nth-child
+                    cell_value = row.find_element(f"td:nth-child({column['index']})").text.strip()
+                    column_values_after_sorting.append(cell_value)
+                except Exception as e:
+                    # Handle any exceptions raised during cell value extraction
+                    print(f"Error extracting cell value: {e}")
+
+            # Determine the expected order of values based on sorting type
+            if column['expected_sort'] == "ascending":
+                expected_sorted_values = sorted(column_values_after_sorting)
+            else:
+                expected_sorted_values = sorted(column_values_after_sorting, reverse=True)
+
+            # Verify that the values in the column are sorted as expected
+            assert column_values_after_sorting == expected_sorted_values, f"Table rows are not sorted correctly by {column['name']}"
 
     def test_entry_list(self):
-        select_element = self.find_element(self.SHOW)
-
+        select_element = self.find_element(self.SHOW)   
         # Iterate over each option value and perform actions
         for option_value in ["10", "50", "100", "-1"]:  # Include "-1" for the "All" option
-            # Click the dropdown to open the options
             select_element.click()
-
-            # Click the <option> corresponding to the specified value
             self.click(f"option[value='{option_value}']")
 
             # Wait for the table content to load (adjust timeout as needed)
             self.wait_for_element("#partner-account-table tbody tr")
+            table_rows = self.find_elements("#partner-account-table tbody tr")
 
-            # Perform actions and assertions based on the displayed entries
-            self.verify_displayed_entries(option_value)
+            if option_value == "-1":
+                expected_row_count = len(table_rows)  # All rows should be displayed
+            else:
+                expected_row_count = int(option_value)  # Convert to integer
 
-             q
+            actual_row_count = len(table_rows)
+            assert actual_row_count <= expected_row_count, f"Expected {expected_row_count} rows, but found {actual_row_count} rows for option value '{option_value}'"
+
+    def test_supervision_icon(self):
+        self.click('//*[@id="partner-account-table"]/tbody/tr[1]/td[2]/a/i')
+        self.assert_element(".modal-title.fs-5", timeout=10)  # Waiting for modal title to appear
+        self.assert_text("Impersonate Parter User", ".modal-title.fs-5")  # Asserting modal title text
+
+    def test_impersonate(self):
+        self.test_supervision_icon()
+        self.click('input.btn-success[value="Impersonate"]')
+        self.assert_title("Tindahang Tapat Partner Dashboard")
+        assert self.is_element_visible(".toast-body")
+        self.assert_text("You are in impersonation mode!", ".toast-body")
+
 
     def test_create_partners(self):
         self.click('a.btn.btn-success[href="/nadmin/partner/accounts/new"]')
         self.assert_url(self.REGISTER_PARTNER_URL) # Assert current URL matches PARTNER_URL
         current_url = self.get_current_url() # Get current URL
         self.assert_equal(current_url, self.REGISTER_PARTNER_URL) # Assert current URL matches PARTNER_URL
-        self.assert_true("partner/accounts" in current_url) # Assert current URL contains "partner/accounts"
-
+        self.assert_true("partner/accounts" in current_url) # Assert current URL contains "partner/account
 
     def test_register_partner(self): # Test Generate 
-        num_accounts = 2
+        num_accounts = 15
         # Navigate to the create partners page
         self.test_create_partners()
 
@@ -70,7 +135,7 @@ class PartnersTest(HomePage, PartnersPage):
             company_name = self.generate_dummy_company_name()
             account_id = self.generate_dummy_account_id()
 
-            # Fill out the registration form with generated data
+            # Fill out the registration form with generated dat
             form_fields = [
                 (self.FULL_NAME, full_name),
                 (self.GMAIL, gmail_account),
