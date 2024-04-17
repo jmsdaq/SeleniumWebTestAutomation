@@ -10,8 +10,8 @@ class HomePage(BaseCase):
         # Open the login page
         self.open("https://review.7.tindahang-tapat.nweca.com/nadmin")
         self.maximize_window()
-        self.type("#session_username", "admin")
-        self.type("#session_password", "admin")
+        self.type("#session_username", "user")
+        self.type("#session_password", "pass")
         self.click('input[type="submit"]')
         self.assert_title("Tindahang Tapat Nadmin Console")
         self.wait_for_element("", ".breadcrumb-item", timeout=50)
