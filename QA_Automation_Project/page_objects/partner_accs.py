@@ -8,8 +8,25 @@ class PartnersPage(BaseCase):
     SIDEBAR_ACTIVE = ".app-sidebar"
     PARTNER_URL = "https://review.7.tindahang-tapat.nweca.com/nadmin/partner/accounts"
     PARTNER_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/partner/accounts"]'
+    PARTNER_ACCOUNT_TITLE = "h5.card-title"
     REGISTER_PARTNER_URL = "https://review.7.tindahang-tapat.nweca.com/nadmin/partner/accounts/new"
+
+    # Locators for Partners Account Table
+    PARTNER_ACCOUNT_TABLE = "#partner-account-table"
+    TABLE_ROWS = "#partner-account-table tbody tr"
+    SHOW_TITLE = "#partner-account-table_length label"
     SHOW = "select[name='partner-account-table_length']"
+    SEARCH_LABEL = "#partner-account-table_filter label"
+    SEARCH_INPUT = "#partner-account-table_filter input[type='search']"
+    
+    # Locators for Partners Account Table Header
+    NUM_COL = "#partner-account-table th[aria-label='#']"
+    NAME_COL = "#partner-account-table th[aria-label='Name: activate to sort column ascending']"
+    COMPANY_COL = "#partner-account-table th[aria-label='Company: activate to sort column ascending']"
+    STATUS_COL = "#partner-account-table th[aria-label='Status: activate to sort column ascending']"
+    CREATED_ON_COL = "#partner-account-table th[aria-label='Created On: activate to sort column ascending']"
+
+    # Locators for Partners Account Table Dropdown
     TR1_DROPDOWN = '//*[@id="partner-account-table"]/tbody/tr[1]/td[7]/div/a'
     EDIT_ACC = '//*[@id="partner-account-table"]/tbody/tr[1]/td[7]/div/div/a[1]'
 
