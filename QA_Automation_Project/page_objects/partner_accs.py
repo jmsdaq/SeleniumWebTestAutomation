@@ -26,7 +26,21 @@ class PartnersPage(BaseCase):
     STATUS_COL = "#partner-account-table th[aria-label='Status: activate to sort column ascending']"
     CREATED_ON_COL = "#partner-account-table th[aria-label='Created On: activate to sort column ascending']"
 
+    # Locators for Supervision Icon
+    PARTNER_POPUP = ".swal2-popup.swal2-toast.swal2-icon-success.swal2-show"
+    POPUP_TXT = ".swal2-title"
+    MODAL = ".modal-title.fs-5"
+    IMPERSONATE_FORM = "form[action='/nadmin/partner/accounts/7/impersonations']"
+    IMPERSONATE_BUTTON = 'input.btn-success[value="Impersonate"]'
+    ABORT_BUTTON = "button.btn.btn-warning[data-bs-dismiss='modal']"
+    PARTNER_PORTAL = "https://review.7.tindahang-tapat.nweca.com/dashboards"
+    EXIT_PORTAL = "a.btn.btn-danger.btn-sm.btn-rounded"
+    DEACTIVATE_IMPR = ".swal2-popup.swal2-show[role='alert']"
+    DEACTIVATE_TXT = ".swal2-title"
+
     # Locators for Partners Account Table Dropdown
+    STATUS_BTN = '//*[@id="partner-account-table"]/tbody/tr[1]/td[5]/a'
+    TR1_SUPERVISION = '//*[@id="partner-account-table"]/tbody/tr[1]/td[2]/a/i'
     TR1_DROPDOWN = '//*[@id="partner-account-table"]/tbody/tr[1]/td[7]/div/a'
     EDIT_ACC = '//*[@id="partner-account-table"]/tbody/tr[1]/td[7]/div/div/a[1]'
 
@@ -37,6 +51,10 @@ class PartnersPage(BaseCase):
     PASSWORD_CONF = "#nadmin_partner_register_form_password_confirmation"
     COMPANY = "#nadmin_partner_register_form_company"
     ACCOUNT_ID = "#nadmin_partner_register_form_account_name"
+
+    # Locators for Dropdown Menu of Partners Account
+    # DROPDOWN_BTN = 
+    DROPDOWN_MENU = 'div.dropdown-menu.show'
 
     def partners(self):
         self.assert_element(".app-sidebar")  # Verify if the sidebar is active (from PartnersPage)
@@ -92,3 +110,22 @@ class PartnersPage(BaseCase):
         value = self.get_attribute(locator, "value")
         if not value:
             self.wait_for_element_value_to_be_populated(locator, timeout=timeout) 
+
+    # def construct_row_xpath(self, row_number):
+    #     # Construct the XPath to locate the specific table row by its index
+    #     row_xpath = f'//*[@id="partner-account-table"]/tbody/tr[{row_number}]'
+    #     return row_xpath
+
+
+    # def interact_with_row_dropdown(self, row_number):
+    #     # Construct the XPath for the specified row
+    #     row_xpath = self.construct_row_xpath(row_number)
+
+    #     # Append the XPath to locate the dropdown button within the specified row
+    #     dropdown_xpath = f'{row_xpath}/td[7]/div'
+
+    #     # Perform actions on the dropdown button using the constructed XPath
+    #     dropdown_element = self.find_element_by_xpath(dropdown_xpath)
+    #     dropdown_element.click()
+
+        
