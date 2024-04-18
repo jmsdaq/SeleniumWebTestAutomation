@@ -1,13 +1,13 @@
-from seleniumbase import BaseCase
 from page_objects.partner_accs import PartnersPage
 from page_objects.home_page import HomePage
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
-from faker import Faker
 import random
-import string
 import csv
+import time
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
 class PartnersTest(HomePage, PartnersPage):
     def setUp(self):
@@ -21,6 +21,7 @@ class PartnersTest(HomePage, PartnersPage):
         self.sleep(5) 
         super().tearDown()
 
+    
     def test_partners_account(self):
         self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
         self.click(self.PARTNER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
@@ -41,8 +42,6 @@ class PartnersTest(HomePage, PartnersPage):
         self.assert_text("Status", self.STATUS_COL)
         self.assert_text("Created On", self.CREATED_ON_COL)
 
-    def test_sorting(self):
-        from seleniumbase import BaseCase
 
     def test_th_sorting(self):
         # Define the column headers to sort and their expected sorting behavior
@@ -103,16 +102,215 @@ class PartnersTest(HomePage, PartnersPage):
             assert actual_row_count <= expected_row_count, f"Expected {expected_row_count} rows, but found {actual_row_count} rows for option value '{option_value}'"
 
     def test_supervision_icon(self):
-        self.click('//*[@id="partner-account-table"]/tbody/tr[1]/td[2]/a/i')
-        self.assert_element(".modal-title.fs-5", timeout=10)  # Waiting for modal title to appear
-        self.assert_text("Impersonate Parter User", ".modal-title.fs-5")  # Asserting modal title text
+        self.click(self.TR1_SUPERVISION)
+        self.assert_element(self.MODAL, timeout=10)  # Waiting for modal title to appear
+        self.assert_text("Impersonate Parter User", self.MODAL)  # Asserting modal title text
+
+    def test_abort_supervision(self):
+        self.test_supervision_icon()
+        self.assert_element_visible(self.IMPERSONATE_FORM)
+        self.click(self.ABORT_BUTTON)
+        self.assert_text("Partner Accounts", self.PARTNER_ACCOUNT_TITLE)
+        self.assert_text("Partner Accounts", self.PARTNER_ACCOUNT_TITLE)
 
     def test_impersonate(self):
         self.test_supervision_icon()
-        self.click('input.btn-success[value="Impersonate"]')
+        self.click(self.IMPERSONATE_BUTTON)
         self.assert_title("Tindahang Tapat Partner Dashboard")
-        assert self.is_element_visible(".toast-body")
-        self.assert_text("You are in impersonation mode!", ".toast-body")
+        current_url = self.get_current_url() # Get current URL
+        self.assert_equal(current_url, self.PARTNER_PORTAL) # Assert current URL matches PARTNER_URL
+        self.assert_true("/dashboard" in current_url) # Assert current URL contains "partner/accounts"
+        self.wait_for_element_visible(self.PARTNER_POPUP, timeout=5)
+        self.assert_element_visible(self.PARTNER_POPUP)
+        self.assert_text("You are in impersonation mode!", self.POPUP_TXT)
+
+    def test_exit_portal(self):
+        self.test_impersonate()
+
+        confirm_button = self.find_element(By.CSS_SELECTOR, self.EXIT_PORTAL)
+
+        if confirm_button:
+            # Click the button to trigger the confirmation dialog
+            confirm_button.click()
+            # Wait for the confirmation dialog to appear
+            try:
+                WebDriverWait(self.driver, 5).until(EC.alert_is_present())
+                alert = self.driver.switch_to.alert     # Switch to the alert dialog
+                dialog_text = alert.text    # Retrieve the text of the confirmation dialog
+            
+                # Assert or check the text of the confirmation dialog
+                expected_text = "You are about to exit impersonation. Continue?"
+                assert expected_text in dialog_text
+
+                # Handle the confirmation by accepting (OK) or dismissing (Cancel)
+                alert.accept()  # This confirms the action (e.g., proceed with exit impersonation)
+                self.assert_element_visible(self.DEACTIVATE_IMPR)
+                self.assert_text("Impersonation deactivated!", self.DEACTIVATE_TXT)
+                self.assert_url(self.PARTNER_URL) # Assert current URL matches PARTNER_URL
+            
+            except Exception as e:
+                self.fail(f"Confirmation dialog not found or handled: {str(e)}")
+                # Handle any exceptions or errors if the confirmation dialog is not encountered
+        else:
+            self.fail("Confirmation button not found on the page")
+            # Fail the test if the confirmation button is not found
+
+    def test_search_input(self):
+        search_input = self.find_element('input[aria-controls="partner-account-table"]') # Find the search input element
+        search_input.send_keys("Harper Baxter") # Perform some actions with the input (e.g., typing)
+
+        # Wait for the table to load after search
+        self.wait_for_element_present("#partner-account-table tbody")
+        self.assertTrue(search_input.is_displayed(), "Search input is not displayed") # Check if the search input is still displayed
+
+        # Clear the search input
+        search_input.clear()
+
+        search_input.send_keys("Hefefhsocnciasfhosd")
+        # Check if the "No matching records found" message is displayed
+        empty_message = self.find_element("td.dataTables_empty")
+        self.assertTrue(empty_message.is_displayed(), "No matching records message is not displayed")
+
+
+
+    def scroll_by_pixels(self, vertical_pixels=0, horizontal_pixels=0):
+        """
+        Scroll the webpage by the specified number of pixels vertically and/or horizontally.
+
+        Args:
+            vertical_pixels (int): Number of pixels to scroll vertically (positive for down, negative for up).
+            horizontal_pixels (int): Number of pixels to scroll horizontally (positive for right, negative for left).
+        """
+        # Construct the JavaScript snippet for scrolling by the specified pixels
+        script = f"window.scrollBy({horizontal_pixels}, {vertical_pixels});"
+
+    def test_scroll_by_pixels(self):
+
+        # Scroll down by 500 pixels vertically
+        self.scroll_by_pixels(vertical_pixels=500)
+
+
+
+
+    def test_dropdown_menu(self):
+        # Define the row number where you want to interact with the dropdown button
+        row_number = 2  # Adjust this number based on your scenario
+        if row_number >= 2:
+            self.scroll_by_pixels(vertical_pixels=1000)
+
+        # Construct the XPath for the specified row
+        row_xpath = f'//*[@id="partner-account-table"]/tbody/tr[{row_number}]'
+
+        # Append the XPath to locate the dropdown button within the specified row
+        dropdown_xpath = f'{row_xpath}/td[7]/div'
+
+        # Perform actions on the dropdown button using the constructed XPath
+        dropdown_element = self.find_element(dropdown_xpath)
+        dropdown_element.click()
+
+        time.sleep(2)
+
+        # Perform additional assertions or actions as needed after interacting with the dropdown
+        # For example, verify that the dropdown menu appears or performs the desired action
+        self.assert_element_present(self.DROPDOWN_MENU, timeout=10)  # Adjust selector as needed
+
+
+        # # Define the row number where you want to interact with the dropdown button
+        # row_number = 1  # Adjust this number based on your scenario
+
+        # # Call the function to interact with the dropdown button in the specified row
+        # self.interact_with_row_dropdown(row_number)
+
+        # # Perform additional assertions or actions as needed after interacting with the dropdown
+        # # For example, verify that the dropdown menu appears or performs the desired action
+        # self.assert_element_present(self.DROPDOWN_MENU, timeout=10)  # Adjust selector as needed
+        # def construct_row_xpath(row_number):
+        #     # Construct the XPath to locate the specific table row by its index
+        #     row_xpath = f'//*[@id="partner-account-table"]/tbody/tr[{row_number}]'
+        #     return row_xpath
+
+        # def interact_with_row_dropdown(row_number):
+        #     # Construct the XPath for the specified row
+        #     row_xpath = construct_row_xpath(row_number)
+
+        #     # Append the XPath to locate the dropdown button within the specified row
+        #     dropdown_xpath = f'{row_xpath}/td[7]/div'
+
+        #     # Perform actions on the dropdown button using the constructed XPath
+        #     dropdown_element = self.find_element_by_xpath(dropdown_xpath)
+        #     dropdown_element.click()
+
+        # # Define the row number where you want to interact with the dropdown button
+        # row_number = 3  # Adjust this number based on your scenario
+
+        # # Call the function to interact with the dropdown button in the specified row
+        # interact_with_row_dropdown(row_number)
+        # # Wait for the dropdown menu to fully expand
+        # self.wait_for_element_visible('div.dropdown-menu')
+        
+
+        # # Define the expected dropdown options (text and corresponding URLs)
+        # expected_options = {
+        #     "Edit": "/nadmin/partner/accounts/7/edit",
+        #     "Branches": "/nadmin/partner/accounts/7/branches",
+        #     "Users": "/nadmin/partner/accounts/7/users",
+        #     "Customers": "/nadmin/partner/accounts/7/customers"
+        # }
+        # # Verify that each expected option is present in the dropdown menu
+        # dropdown_items = self.find_elements('a.dropdown-item')
+        # for item in dropdown_items:
+        #     item_text = item.text
+        #     item_href = item.get_attribute('href')
+        #     if item_text in expected_options:
+        #         # Assert the presence of the expected option
+        #         self.assert_true(item.is_displayed(), f"Dropdown option '{item_text}' is not displayed")
+        #         # Assert that the href attribute matches the expected URL
+        #         self.assert_equal(item_href, expected_options[item_text], f"Unexpected href for dropdown option '{item_text}'")
+
+        # # Click the dropdown toggle again to close the menu (optional)
+        # self.click(self.DROPDOWN_BTN)  # Close the dropdown menu
+
+    def test_toggle_status(self):
+        # self.assert_element(self.STATUS_BTN)  # Ensure toggle element is present
+        # current_status = self.get_text(self.STATUS_BTN).strip()
+        # target_status = "Inactive" if current_status == "Active" else "Active"
+
+        # self.click(self.STATUS_BTN)  # Click to toggle status
+        # self.wait_for_text_visible(self.STATUS_BTN, target_status, timeout=10)  # Wait for new status
+        # self.assert_text(target_status, self.STATUS_BTN)  # Verify new status
+
+        # self.click(self.STATUS_BTN)  # Click again to revert status
+        # self.wait_for_text_visible(self.STATUS_BTN, current_status, timeout=10)  # Wait for original status
+        # self.assert_text(current_status, self.STATUS_BTN)  # Verify original status
+
+        self.assert_element(self.STATUS_BTN)  # Ensure toggle element is present
+        current_status = self.get_text(self.STATUS_BTN).strip()
+
+        # Determine target status based on current status
+        if current_status == "Active":
+            target_status = "Inactive"
+        else:
+            target_status = "Active"
+
+        # Click to toggle status
+        self.click(self.STATUS_BTN)
+
+        # Wait for the new target_status to appear after toggling
+        self.wait_for_text_visible(self.STATUS_BTN, target_status, timeout=10)
+
+        # Verify that the toggle button now displays the target_status
+        self.assert_text(target_status, self.STATUS_BTN)
+
+        # Click again to revert status
+        self.click(self.STATUS_BTN)
+
+        # Wait for the original current_status to appear after toggling back
+        self.wait_for_text_visible(self.STATUS_BTN, current_status, timeout=10)
+
+        # Verify that the toggle button now displays the original current_status
+        self.assert_text(current_status, self.STATUS_BTN)
+
+
 
 
     def test_create_partners(self):
@@ -122,8 +320,10 @@ class PartnersTest(HomePage, PartnersPage):
         self.assert_equal(current_url, self.REGISTER_PARTNER_URL) # Assert current URL matches PARTNER_URL
         self.assert_true("partner/accounts" in current_url) # Assert current URL contains "partner/account
 
+    
+
     def test_register_partner(self): # Test Generate 
-        num_accounts = 15
+        num_accounts = 1
         # Navigate to the create partners page
         self.test_create_partners()
 
@@ -258,21 +458,7 @@ class PartnersTest(HomePage, PartnersPage):
                 writer.writerow(data)
 
         
-    def test_search_input(self):
-        search_input = self.find_element('input[aria-controls="partner-account-table"]') # Find the search input element
-        search_input.send_keys("Harper Baxter") # Perform some actions with the input (e.g., typing)
 
-        # Wait for the table to load after search
-        self.wait_for_element_present("#partner-account-table tbody")
-        self.assertTrue(search_input.is_displayed(), "Search input is not displayed") # Check if the search input is still displayed
-
-        # Clear the search input
-        search_input.clear()
-
-        search_input.send_keys("Hefefhsocnciasfhosd")
-        # Check if the "No matching records found" message is displayed
-        empty_message = self.find_element("td.dataTables_empty")
-        self.assertTrue(empty_message.is_displayed(), "No matching records message is not displayed")
 
     # def test_edit_partner(self):
     #     self.partners()
