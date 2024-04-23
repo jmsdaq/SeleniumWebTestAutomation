@@ -1,5 +1,5 @@
 from seleniumbase import BaseCase
-from page_objects.warehouse_user import WarehouseUserPage
+from page_objects.user import UserPage
 
 class LoginPage(BaseCase):
 
