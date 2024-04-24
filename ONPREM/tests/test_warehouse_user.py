@@ -27,5 +27,27 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # wait
 
-        # Create New User 
+        # Click the Add New User Button
         self.click(self.ADD_BTN)
+        
+
+        # Generate fake user data using the helper method
+        user_data = self.generate_fake_user_data()
+
+        # Fill in the form fields with generated fake data
+        self.type('#user_name.form-control', user_data['name'])
+        self.type('input#user_employee_code.form-control', str(user_data['employee_code']))
+        self.type('input#user_username.form-control', user_data['username'])
+        self.type('input#user_password.form-control', user_data['password'])
+        self.type('input#user_pin.form-control', str(user_data['pin']))
+        self.select_option_by_text('select#user_operation_role.form-select', user_data['operation_role'])
+
+
+        # Assert Valid Input
+        # self.click
+
+        # Assert Invalid Input
+
+
+        # Assert Duplicate Input
+        self.click(self.SUBMIT)
