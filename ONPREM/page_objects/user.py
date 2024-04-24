@@ -30,7 +30,7 @@ class UserPage(BaseCase):
     # ONPREM LOCATORS
     ONPREM_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/users"]'
 
-    def scroll_down_with_actions(self, element):
+    def scroll_with_actions(self, element):
         # Scroll down to the specified element using ActionChains
         actions = ActionChains(self.driver)
         actions.move_to_element(element)

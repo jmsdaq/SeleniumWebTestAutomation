@@ -3,7 +3,7 @@ from page_objects.login import LoginPage
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from seleniumbase import BaseCase
+
 
 
 class WarehouseUserTest(LoginPage, UserPage):
@@ -36,7 +36,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         # Find an element towards the bottom of the page (e.g., footer)
         # Call the scroll function to scroll down using ActionChains
         bottom_element = self.find_element(self.FOOTER)
-        self.scroll_down_with_actions(bottom_element)
+        self.scroll_with_actions(bottom_element)
         self.wait_for_element(self.CLOSE_BTN)
         self.click(self.CLOSE_BTN)
         
@@ -45,10 +45,11 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.wait_for_element(self.MODAL)
         self.type(self.EMPLOYEE_CODE, "test")
         bottom_element = self.find_element(self.FOOTER)
-        self.scroll_down_with_actions(bottom_element)
+        self.scroll_with_actions(bottom_element)
         self.click(self.SUBMIT)
         
         header_element = self.find_element(self.HEADER)
+        self.scroll_with_actions(header_element)
         self.assert_element(self.ERRORS)  # Ensure errors element is present
 
         # # Generate fake user data using the helper method
