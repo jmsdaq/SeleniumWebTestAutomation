@@ -35,12 +35,12 @@ class WarehouseUserTest(LoginPage, UserPage):
         user_data = self.generate_fake_user_data()
 
         # Fill in the form fields with generated fake data
-        self.type('#user_name.form-control', user_data['name'])
-        self.type('input#user_employee_code.form-control', str(user_data['employee_code']))
-        self.type('input#user_username.form-control', user_data['username'])
-        self.type('input#user_password.form-control', user_data['password'])
-        self.type('input#user_pin.form-control', str(user_data['pin']))
-        self.select_option_by_text('select#user_operation_role.form-select', user_data['operation_role'])
+        self.type(self.NAME, user_data['name'])
+        self.type(self.EMPLOYEE_CODE, str(user_data['employee_code']))
+        self.type(self.USERNAME, user_data['username'])
+        self.type(self.PASSWORD, user_data['password'])
+        self.type(self.PIN, str(user_data['pin']))
+        self.select_option_by_text(self.OPERATIONAL_ROLE, user_data['operation_role'])
 
 
         # Assert Valid Input

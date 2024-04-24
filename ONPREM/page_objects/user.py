@@ -12,12 +12,12 @@ class UserPage(BaseCase):
 
     # ADD FORM LOCALTORS
     ADD_BTN = ".btn.btn-success"
-    USERNAME = "#user_name" # "input.form-control[name='user[name]']"
-    EMPLOYEE_CODE = "input.form-control[name='user[employee_code]']"
-    USERNAME = "input.form-control[name='user[username]']"
-    PASSWORD = "input.form-control[name='user[password]']"
-    PIN = "input.form-control[name='user[pin]']"
-    OPERATIONAL_ROLE = "input.form-control[name='user[operational_role]']"
+    NAME = '#user_name.form-control'
+    EMPLOYEE_CODE = 'input#user_employee_code.form-control'
+    USERNAME = 'input#user_username.form-control'
+    PASSWORD = 'input#user_password.form-control'
+    PIN = 'input#user_pin.form-control'
+    OPERATIONAL_ROLE = 'select#user_operation_role.form-select'
     SUBMIT = 'input[type="submit"]'
 
 
