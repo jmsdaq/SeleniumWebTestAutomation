@@ -23,8 +23,6 @@ class UserPage(BaseCase):
     CLOSE_ICON = ".btn-close"
     CLOSE_BTN = 'button.btn-warning[data-bs-dismiss="modal"]'
     ERRORS = "#errors"
-    FOOTER = ".modal-footer"
-    HEADER = ".modal-header"
 
 
     # ONPREM LOCATORS
@@ -36,6 +34,13 @@ class UserPage(BaseCase):
         actions.move_to_element(element)
         actions.perform()
 
+    def scroll_up(self):
+        header_element = self.find_element(".modal-header")
+        self.scroll_with_actions(header_element)
+
+    def scroll_down(self):
+        footer_element = self.find_element(".modal-footer")
+        self.scroll_with_actions(footer_element)
 
     def generate_fake_user_data(self):
         faker = Faker()

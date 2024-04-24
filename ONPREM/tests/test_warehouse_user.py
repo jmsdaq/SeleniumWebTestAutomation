@@ -23,9 +23,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.click(self.WAREHOUSE_MENU) 
         self.wait_for_element(self.WAREHOUSE_MENU)
 
-        # wait
-
-        # Click the Close Icon for the Modal2
+        # Click the Close Icon for the Modal
         self.click(self.ADD_BTN)
         self.wait_for_element(self.MODAL)
         self.click(self.CLOSE_ICON)
@@ -33,35 +31,31 @@ class WarehouseUserTest(LoginPage, UserPage):
         # Click the Close Button for the Modal
         self.click(self.ADD_BTN)
         self.wait_for_element(self.MODAL)
-        # Find an element towards the bottom of the page (e.g., footer)
-        # Call the scroll function to scroll down using ActionChains
-        bottom_element = self.find_element(self.FOOTER)
-        self.scroll_with_actions(bottom_element)
+        self.scroll_down() # scroll down method
         self.wait_for_element(self.CLOSE_BTN)
         self.click(self.CLOSE_BTN)
         
-
+        # Test Errors in Add new user
         self.click(self.ADD_BTN)
         self.wait_for_element(self.MODAL)
         self.type(self.EMPLOYEE_CODE, "test")
-        bottom_element = self.find_element(self.FOOTER)
-        self.scroll_with_actions(bottom_element)
+        self.scroll_down() # scroll down method
         self.click(self.SUBMIT)
-        
-        header_element = self.find_element(self.HEADER)
-        self.scroll_with_actions(header_element)
+        self.scroll_up()
         self.assert_element(self.ERRORS)  # Ensure errors element is present
 
-        # # Generate fake user data using the helper method
-        # user_data = self.generate_fake_usesr_data()
+        # TEST VALID INPUT
+        # Generate fake user data using the helper method
+        user_data = self.generate_fake_user_data()
 
-        # # Fill in the form fields with generated fake data
-        # self.type(self.NAME, user_data['name'])
-        # self.type(self.EMPLOYEE_CODE, str(user_data['employee_code']))
-        # self.type(self.USERNAME, user_data['username'])
-        # self.type(self.PASSWORD, user_data['password'])
-        # self.type(self.PIN, str(user_data['pin']))
-        # self.select_option_by_text(self.OPERATIONAL_ROLE, user_data['operation_role'])
+        # Fill in the form fields with generated fake data
+        self.type(self.NAME, user_data['name'])
+        self.type(self.EMPLOYEE_CODE, str(user_data['employee_code']))
+        self.type(self.USERNAME, user_data['username'])
+        self.type(self.PASSWORD, user_data['password'])
+        self.type(self.PIN, str(user_data['pin']))
+        self.select_option_by_text(self.OPERATIONAL_ROLE, user_data['operation_role'])
+        self.click(self.SUBMIT)
 
 
         # Assert Valid Input
