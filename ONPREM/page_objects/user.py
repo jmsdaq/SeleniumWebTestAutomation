@@ -2,6 +2,7 @@ from seleniumbase import BaseCase
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.action_chains import ActionChains
 from faker import Faker
+import random
 
 class UserPage(BaseCase):
 
@@ -23,6 +24,10 @@ class UserPage(BaseCase):
     CLOSE_ICON = ".btn-close"
     CLOSE_BTN = 'button.btn-warning[data-bs-dismiss="modal"]'
     ERRORS = "#errors"
+    FOOTER = ".modal-footer"
+    HEADER = ".modal-header"
+    SEARCH = 'input[type="search"][aria-controls="app-users"]'
+
 
 
     # ONPREM LOCATORS
