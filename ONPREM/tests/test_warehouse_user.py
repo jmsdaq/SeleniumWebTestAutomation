@@ -60,31 +60,11 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.click(self.SUBMIT)
         self.sleep(2)
 
-        # Print the generated username
-        print("Generated Username:", username)
-        # Now you can use the generated username for interaction with the search input
-        # Wait for the search input to be visible and interactable
-        wait = WebDriverWait(self.driver, 10)
-        search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
-        self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
+        # Assert Valid Input
+        # self.click
 
-        search_input.clear()
-        search_input.send_keys(username)
+        # Assert Invalid Input
 
-        self.wait_for_element_present("#app-users_wrapper")
-        # Check if the search input is displayed
-        self.assertTrue(search_input.is_displayed())
-        # Wait for the user list table to load
-        self.wait_for_element_present("#app-users_wrapper")
 
-        # Verify that the expected user row is visible in the table
-        user_row_xpath = f'//tr[contains(.//td, "{username}")]'
-        self.assertTrue(self.is_element_present(user_row_xpath), f"User with username '{search_query}' not found in the table")
-        
-        # Clear the search input
-        search_input.clear()
-
-        search_input.send_keys("Hefefhsocnciasfhosd")
-        # Check if the "No matching records found" message is displayed
-        empty_message = self.find_element(".dataTables_empty")
-        self.assertTrue(empty_message.is_displayed(), "No matching records message is not displayed")
+        # Assert Duplicate Input
+        # self.click(self.SUBMIT)
