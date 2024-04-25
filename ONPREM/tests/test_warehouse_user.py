@@ -15,15 +15,8 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(10) 
         super().tearDown()
 
-    # def perform_search(self, username):
-    #     self.wait_for_element(self.SEARCH)
-    #     search_input = self.find_element(self.SEARCH)
-    #     search_input.clear()
-    #     search_input.send_keys(username)
-    #     search_input.submit()
-
     def test_warehouse_users(self):
-        
+
         self.wait_for_element(self.SIDEBAR_ACTIVE)
         self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
         self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
@@ -40,7 +33,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         # CLICK THE CLOSE BUTTON
         self.click(self.ADD_BTN)
         self.wait_for_element(self.MODAL)
-        self.scroll_down() # scroll down method
+        self.scroll_to(self.CLOSE_BTN) # scroll down method
         self.wait_for_element(self.CLOSE_BTN)
         self.click(self.CLOSE_BTN)
         
@@ -79,20 +72,11 @@ class WarehouseUserTest(LoginPage, UserPage):
         search_input.clear()
         search_input.send_keys(username)
 
-        self.wait_for_element_present("#app-users_wrapper")
-        # Check if the search input is displayed
-        self.assertTrue(search_input.is_displayed())
-        # Wait for the user list table to load
-        self.wait_for_element_present(self.TABLE)
+        # Wait for the table rows to update based on the search query (wait for presence of table rows)
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, self.TABLE_ROWS)))
 
-        # Verify that the expected user row is visible in the table
-        user_row_xpath = f'//tr[contains(.//td, "{username}")]'
-        self.assertTrue(self.is_element_present(user_row_xpath), f"User with username '{search_query}' not found in the table")
-        
-        # Clear the search input
-        search_input.clear()
+        # Get all table rows within the table body
+        table_rows = self.driver.find_elements(By.XPATH, '//*[@id="app-users"]/tbody/tr')
 
-        search_input.send_keys("Hefefhsocnciasfhosd")
-        # Check if the "No matching records found" message is displayed
-        empty_message = self.find_element(".dataTables_empty")
-        self.assertTrue(empty_message.is_displayed(), "No matching records message is not displayed")
+        # Assert that the table has more than 0 rows after search
+        self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")

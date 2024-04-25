@@ -28,6 +28,7 @@ class UserPage(BaseCase):
     HEADER = ".modal-header"
     SEARCH = 'input[type="search"][aria-controls="app-users"]'
     TABLE = ".dataTables_wrapper no-footer"
+    TABLE_ROWS = '#app-users tbody tr'
 
     # ONPREM LOCATORS
     ONPREM_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/users"]'
