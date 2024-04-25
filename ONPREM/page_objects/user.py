@@ -26,6 +26,8 @@ class UserPage(BaseCase):
     ERRORS = "#errors"
     FOOTER = ".modal-footer"
     HEADER = ".modal-header"
+
+    # SEARCH LOCATORS
     SEARCH = 'input[type="search"][aria-controls="app-users"]'
     TABLE = ".dataTables_wrapper no-footer"
     TABLE_ROWS = '#app-users tbody tr'
@@ -33,6 +35,11 @@ class UserPage(BaseCase):
     AVATAR = '//*[@id="app-users"]/tbody/tr/td[2]'
     CHOOSE_IMG = "#user_image_url"
     POPUP = "#swal2-title"
+
+    # SHOW ENTRIES LOCATORS
+    SHOW = "select[name='app-users_length']"
+
+
 
     # ONPREM LOCATORS
     ONPREM_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/users"]'
