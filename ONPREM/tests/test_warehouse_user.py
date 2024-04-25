@@ -64,7 +64,17 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # Print the generated username
         print("Generated Username:", username)
-        # Now you can use the generated username for interaction with the search input
+
+        # Check if the "No matching records found" message is displayed
+        wait = WebDriverWait(self.driver, 10)
+        search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
+        self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
+
+        search_input.send_keys("Hefefhsocnciasfhosd")
+        empty_message = self.find_element(self.EMPTY_TABLE)
+        self.assertTrue(empty_message.is_displayed(), "No matching records message is not displayed")
+        self.sleep(3)
+
         # Wait for the search input to be visible and interactable
         wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))

@@ -29,11 +29,10 @@ class UserPage(BaseCase):
     SEARCH = 'input[type="search"][aria-controls="app-users"]'
     TABLE = ".dataTables_wrapper no-footer"
     TABLE_ROWS = '#app-users tbody tr'
+    EMPTY_TABLE = ".dataTables_empty"
     AVATAR = '//*[@id="app-users"]/tbody/tr/td[2]'
     CHOOSE_IMG = "#user_image_url"
     POPUP = "#swal2-title"
-
-
 
     # ONPREM LOCATORS
     ONPREM_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/users"]'
