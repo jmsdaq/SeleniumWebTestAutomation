@@ -17,14 +17,12 @@ class WarehouseUserTest(LoginPage, UserPage):
         super().tearDown()
 
     def test_warehouse_users(self):
-
         self.wait_for_element(self.SIDEBAR_ACTIVE)
         self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
         self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
         self.wait_for_element(self.WAREHOUSE_MENU)
         self.click(self.WAREHOUSE_MENU) 
         
-
         # CLICK CLOSE ICON
         self.wait_for_element(self.ADD_BTN)
         self.click(self.ADD_BTN)
@@ -108,6 +106,5 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.driver.execute_script('arguments[0].style = ""; arguments[0].style.display = "block";', upload_input)
         # upload_input.send_keys(file_path)
         upload_input.send_keys(file_path)
-
         self.click(self.SUBMIT)
         self.assert_text("User picture has been updated successfully!", self.POPUP)
