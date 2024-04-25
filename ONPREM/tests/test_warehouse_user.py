@@ -3,6 +3,7 @@ from page_objects.user import UserPage
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import os
 
 class WarehouseUserTest(LoginPage, UserPage):
     def setUp(self):
@@ -68,6 +69,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
         self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
 
         search_input.clear()
         search_input.send_keys(username)
@@ -80,3 +82,22 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # Assert that the table has more than 0 rows after search
         self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
+        self.sleep(3)
+
+        #UPDATE USER'S AVATAR
+        # Construct the absolute path to the file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.abspath(os.path.join(current_dir, '..', 'data', 'avatar.jpg'))
+        self.click(self.AVATAR)
+        self.wait_for_element_visible(self.MODAL)
+        # Wait for the file upload input to be clickable
+        wait = WebDriverWait(self.driver, 10)
+        upload_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.CHOOSE_IMG)))
+        
+        # Upload the file using JavaScript to set the file path directly
+        self.driver.execute_script('arguments[0].style = ""; arguments[0].style.display = "block";', upload_input)
+        # upload_input.send_keys(file_path)
+        upload_input.send_keys(file_path)
+
+        self.click(self.SUBMIT)
+        self.assert_text("User picture has been updated successfully!", self.POPUP)
