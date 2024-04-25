@@ -160,3 +160,30 @@ class WarehouseUserTest(LoginPage, UserPage):
             # Scroll back up to the top of the page for the next iteration
             self.driver.execute_script("window.scrollTo(0, 0);")
             self.sleep(1)  # Add a short delay to ensure scrolling is complete
+    
+        self.sleep(3)
+        # Click the column header to trigger sorting
+        name_column_header = self.find_element(By.XPATH, '//th[contains(text(), "Name")]')
+        name_column_header.click()
+
+        # Wait for the table content to reload after sorting (adjust timeout as needed)
+        self.wait_for_element("#app-users tbody tr")
+
+        # Find all visible rows in the table
+        visible_rows = self.find_elements("#app-users tbody tr")
+
+        # Scroll to the last visible row to observe the sorting result
+        if visible_rows:
+            last_visible_row = visible_rows[-1]
+            self.driver.execute_script("arguments[0].scrollIntoView();", last_visible_row)
+            self.sleep(1)  # Add a short delay to allow scrolling to complete
+
+            # Extract the necessary data (e.g., names) for comparison
+            first_row_name = visible_rows[0].find_element(By.XPATH, "./td[1]").text
+            last_row_name = last_visible_row.find_element(By.XPATH, "./td[1]").text
+
+            # Assert that the first row's name is less than or equal to the last row's name
+            assert first_row_name <= last_row_name, "Sorting order is incorrect"
+        else:
+            # Handle case where no rows are visible after sorting
+            raise AssertionError("No visible rows found after sorting")
