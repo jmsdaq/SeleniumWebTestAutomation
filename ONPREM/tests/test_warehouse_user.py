@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import StaleElementReferenceException
 import os
 
 class WarehouseUserTest(LoginPage, UserPage):
@@ -25,7 +26,8 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
         self.sleep(2)
         self.click(self.WAREHOUSE_MENU) 
-
+    
+    def test_other(self):
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADD WAREHOUSE USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # CLICK CLOSE ICON
         self.wait_for_element(self.ADD_BTN)
@@ -125,6 +127,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(1)
         search_input.send_keys(Keys.BACKSPACE)       # Delete the selected text
 
+
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         select_element = self.find_element(self.SHOW)
         # Define a list of option values to test, including "-1" for "All" option
@@ -163,15 +166,35 @@ class WarehouseUserTest(LoginPage, UserPage):
             self.sleep(1)  # Add a short delay to ensure scrolling is complete
         self.sleep(3)
     
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    def test_sorting_table_column(self):
+        self.test_warehouse_users()
+        self.sleep(5)
+
+        select_element = self.find_element(self.SHOW)
+        # Click the 'Show Entries' dropdown and select the "All" option
+        select_element.click()
+        self.click("option[value='-1']")
+        self.sleep(3)
+
+
         # Click the column header to trigger sorting
         name_column_header = self.find_element(By.XPATH, '//th[contains(text(), "Name")]')
         name_column_header.click()
+
         # Wait for the table content to reload after sorting (adjust timeout as needed)
-        self.wait_for_element("#app-users tbody tr")
+        wait = WebDriverWait(self.driver, 3)  # Adjust timeout as needed
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#app-users tbody tr")))
 
         # Find all visible rows in the table
         visible_rows = self.find_elements("#app-users tbody tr")
+
+            # Refresh the list of visible rows after sorting
+        try:
+            visible_rows = self.find_elements("#app-users tbody tr")
+        except StaleElementReferenceException:
+            pass
 
         # Scroll to the last visible row to observe the sorting result
         if visible_rows:
@@ -180,15 +203,19 @@ class WarehouseUserTest(LoginPage, UserPage):
             self.sleep(1)  # Add a short delay to allow scrolling to complete
 
             # Extract the necessary data for comparison
+            # Extract the necessary data for comparison
             first_row_name = visible_rows[0].find_element(By.XPATH, "./td[1]").text
             last_row_name = last_visible_row.find_element(By.XPATH, "./td[1]").text
 
             # Assert that the first row's name is less than or equal to the last row's name
             assert first_row_name <= last_row_name, "Sorting order is incorrect"
+
         else:
             # Handle case where no rows are visible after sorting
             raise AssertionError("No visible rows found after sorting")
-        
+
+
+    def test_edit(self):    
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         row_index = 1
         # Construct the XPath for the dropdown toggle button within the specified table row
