@@ -19,13 +19,14 @@ class WarehouseUserTest(LoginPage, UserPage):
         super().tearDown()
 
     def test_warehouse_users(self):
-
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> NAVIGATION TO WAREHOUSE USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         self.wait_for_element(self.SIDEBAR_ACTIVE)
         self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
         self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
         self.sleep(2)
         self.click(self.WAREHOUSE_MENU) 
 
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADD WAREHOUSE USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # CLICK CLOSE ICON
         self.wait_for_element(self.ADD_BTN)
         self.click(self.ADD_BTN)
@@ -68,6 +69,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         # Print the generated username
         print("Generated Username:", username)
 
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SEARCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # CHECK NO MATCHING RECORD FOUND
         wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
@@ -99,18 +101,20 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
         self.sleep(3)
 
-        #UPDATE USER'S AVATAR
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> UPDATE USER'S AVATAR <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # Construct the absolute path to the file
         current_dir = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.abspath(os.path.join(current_dir, '..', 'data', 'avatar.jpg'))
         self.click(self.AVATAR)
         self.wait_for_element_visible(self.MODAL)
+
         # Wait for the file upload input to be clickable
         wait = WebDriverWait(self.driver, 10)
         upload_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.CHOOSE_IMG)))
         
         # Upload the file using JavaScript to set the file path directly
         self.driver.execute_script('arguments[0].style = ""; arguments[0].style.display = "block";', upload_input)
+
         # upload_input.send_keys(file_path)
         upload_input.send_keys(file_path)
         self.click(self.SUBMIT)
@@ -121,18 +125,16 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(1)
         search_input.send_keys(Keys.BACKSPACE)       # Delete the selected text
 
-        # TEST SHOW ENTRIES
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         select_element = self.find_element(self.SHOW)
-
         # Define a list of option values to test, including "-1" for "All" option
         option_values = ["10", "50", "100", "-1"]
-
         for option_value in option_values:
             # Click the 'Show Entries' dropdown and select the current option value
             select_element.click()
             self.click(f"option[value='{option_value}']")
-
             self.sleep(3)
+
             # Scroll down to the bottom of the page to load all content
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             self.sleep(2)  # Add a short delay to ensure the content is fully loaded
@@ -151,21 +153,20 @@ class WarehouseUserTest(LoginPage, UserPage):
 
             # Get the actual number of rows displayed on the page
             actual_row_count = len(table_rows)
-
+            
             # Assert that the actual row count is less than or equal to the expected row count
             assert actual_row_count <= expected_row_count, (
                 f"Expected {expected_row_count} rows or fewer, but found {actual_row_count} rows for option value '{option_value}'"
             )
-
             # Scroll back up to the top of the page for the next iteration
             self.driver.execute_script("window.scrollTo(0, 0);")
             self.sleep(1)  # Add a short delay to ensure scrolling is complete
-    
         self.sleep(3)
+    
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # Click the column header to trigger sorting
         name_column_header = self.find_element(By.XPATH, '//th[contains(text(), "Name")]')
         name_column_header.click()
-
         # Wait for the table content to reload after sorting (adjust timeout as needed)
         self.wait_for_element("#app-users tbody tr")
 
@@ -178,7 +179,7 @@ class WarehouseUserTest(LoginPage, UserPage):
             self.driver.execute_script("arguments[0].scrollIntoView();", last_visible_row)
             self.sleep(1)  # Add a short delay to allow scrolling to complete
 
-            # Extract the necessary data (e.g., names) for comparison
+            # Extract the necessary data for comparison
             first_row_name = visible_rows[0].find_element(By.XPATH, "./td[1]").text
             last_row_name = last_visible_row.find_element(By.XPATH, "./td[1]").text
 
@@ -187,3 +188,51 @@ class WarehouseUserTest(LoginPage, UserPage):
         else:
             # Handle case where no rows are visible after sorting
             raise AssertionError("No visible rows found after sorting")
+        
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        row_index = 1
+        # Construct the XPath for the dropdown toggle button within the specified table row
+        dropdown_toggle_xpath = f'//*[@id="app-users"]/tbody/tr[{row_index}]/td[8]/div/a'
+
+        # Locate the dropdown toggle button
+        dropdown_toggle = self.driver.find_element(By.XPATH, dropdown_toggle_xpath)
+
+        # Click the dropdown toggle button to open the dropdown menu
+        dropdown_toggle.click()
+
+        # Wait for the dropdown menu to appear
+        dropdown_menu_xpath = f'//*[@id="app-users"]/tbody/tr[{row_index}]/td[8]/div/div[@class="dropdown-menu show"]'
+        dropdown_menu = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, dropdown_menu_xpath)))
+
+        # Locate the "Edit" and "Delete" links within the dropdown menu
+        edit_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Edit")]')
+        # delete_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Delete")]')
+
+        # Click the "Edit" link
+        edit_link.click()
+        self.wait_for_element(self.MODAL)
+        self.assert_text("Edit Warehouse User", self.EDIT_MODAL_TITLE)
+        self.type(self.USERNAME, "james")
+        self.scroll_to(self.SUBMIT)
+        self.assert_text("App user updated successfully!", self.POPUP)
+        self.sleep(3)
+
+
+        # Perform assertions 
+
+        # Click the "Delete" link
+        delete_link.click()
+        
+        WebDriverWait(self.driver, 5).until(EC.alert_is_present())
+        alert = self.driver.switch_to.alert     # Switch to the alert dialog
+        dialog_text = alert.text    # Retrieve the text of the confirmation dialog
+    
+        # Assert or check the text of the confirmation dialog
+        expected_text = "Delete user?"
+        assert expected_text in dialog_text
+
+        # Handle the delete confirmation (if applicable)
+        confirm_delete_button = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Delete")]')))
+        confirm_delete_button.click()
+
+        # Perform assertions 

@@ -42,7 +42,8 @@ class UserPage(BaseCase):
     # SHOW ENTRIES LOCATORS
     SHOW = "select[name='app-users_length']"
 
-
+    # EDIT LOCATORS
+    EDIT_MODAL_TITLE = ".modal-title fs-5"
 
     # ONPREM LOCATORS
     ONPREM_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/users"]'
