@@ -73,3 +73,10 @@ class UserPage(BaseCase):
             'operation_role': faker.random_element(elements=["cashier", "picker", "packer", "checker", "supervisor", "dispatcher"])
         }
         return user_data
+
+    def warehouse_navigation(self):
+        self.wait_for_element(self.SIDEBAR_ACTIVE)
+        self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
+        self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
+        self.sleep(2)
+        self.click(self.WAREHOUSE_MENU) 
