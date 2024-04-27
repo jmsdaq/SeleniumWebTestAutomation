@@ -217,6 +217,7 @@ class WarehouseUserTest(LoginPage, UserPage):
 
     def test_edit(self):    
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        self.warehouse_navigation()
         row_index = 1
         # Construct the XPath for the dropdown toggle button within the specified table row
         dropdown_toggle_xpath = f'//*[@id="app-users"]/tbody/tr[{row_index}]/td[8]/div/a'
