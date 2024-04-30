@@ -166,7 +166,7 @@ class WarehouseUserTest(LoginPage, UserPage):
             self.sleep(1)  # Add a short delay to ensure scrolling is complete
         self.sleep(3)
     
-    
+
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     def test_sorting_table_column(self):
         self.test_warehouse_users()
@@ -213,23 +213,29 @@ class WarehouseUserTest(LoginPage, UserPage):
         else:
             # Handle case where no rows are visible after sorting
             raise AssertionError("No visible rows found after sorting")
-
+        
 
     def test_edit(self):    
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        self.warehouse_navigation()
+        self.test_warehouse_users()
         row_index = 1
         # Construct the XPath for the dropdown toggle button within the specified table row
-        dropdown_toggle_xpath = f'//*[@id="app-users"]/tbody/tr[{row_index}]/td[8]/div/a'
+        # dropdown_toggle_xpath = f'//*[@id="app-users"]/tbody/tr[{row_index}]/td[8]/div'
+        self.scroll_to(self.TR1)
+        dropdown_toggle_xpath = self.TR1
 
         # Locate the dropdown toggle button
-        dropdown_toggle = self.driver.find_element(By.XPATH, dropdown_toggle_xpath)
+        # dropdown_toggle = self.driver.find_element(By.XPATH, dropdown_toggle_xpath)
 
-        # Click the dropdown toggle button to open the dropdown menu
+        # Use WebDriverWait to wait for the element to be present and visible
+        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
+        dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.TR1)))
+
+        # Click the dropdown toggle button to open the dropdown menu    
         dropdown_toggle.click()
 
         # Wait for the dropdown menu to appear
-        dropdown_menu_xpath = f'//*[@id="app-users"]/tbody/tr[{row_index}]/td[8]/div/div[@class="dropdown-menu show"]'
+        dropdown_menu_xpath = f'//*[@id="app-users"]/tbody/tr[1]/td[8]/div/div[@class="dropdown-menu show"]'
         dropdown_menu = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, dropdown_menu_xpath)))
 
         # Locate the "Edit" and "Delete" links within the dropdown menu
@@ -239,9 +245,16 @@ class WarehouseUserTest(LoginPage, UserPage):
         # Click the "Edit" link
         edit_link.click()
         self.wait_for_element(self.MODAL)
-        self.assert_text("Edit Warehouse User", self.EDIT_MODAL_TITLE)
+        self.scroll_up()
+        self.assert_text("Edit Warehouse User", "h1")
         self.type(self.USERNAME, "james")
-        self.scroll_to(self.SUBMIT)
+
+        # # Wait until the username input field contains the expected value
+        # wait = WebDriverWait(self.driver, 10)
+        # wait.until(EC.text_to_be_present_in_element_value(self.USERNAME, "james"))
+
+        self.scroll_to(self.UPDATE_BTN)
+        self.click(self.UPDATE_BTN)
         self.assert_text("App user updated successfully!", self.POPUP)
         self.sleep(3)
 
