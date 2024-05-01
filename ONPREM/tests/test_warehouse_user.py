@@ -19,15 +19,11 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(10) 
         super().tearDown()
 
-    def test_warehouse_users(self):
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> NAVIGATION TO WAREHOUSE USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        self.wait_for_element(self.SIDEBAR_ACTIVE)
-        self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
-        self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
-        self.sleep(2)
-        self.click(self.WAREHOUSE_MENU) 
+    def test_warehouse_user(self):
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>> NAVIGATION TO WAREHOUSE USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        self.warehouse_nav()
     
-    def test_other(self):
+    # def test_other(self):
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADD WAREHOUSE USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # CLICK CLOSE ICON
         self.wait_for_element(self.ADD_BTN)
@@ -75,7 +71,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         # CHECK NO MATCHING RECORD FOUND
         wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
-        self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
+        # self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
 
         search_input.send_keys("Hefefhsocnciasfhosd")
         self.sleep(2)
@@ -168,15 +164,15 @@ class WarehouseUserTest(LoginPage, UserPage):
     
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    def test_sorting_table_column(self):
-        self.test_warehouse_users()
-        self.sleep(5)
+    # def test_sorting_table_column(self):
+    #     self.warehouse_nav()
 
-        select_element = self.find_element(self.SHOW)
-        # Click the 'Show Entries' dropdown and select the "All" option
-        select_element.click()
-        self.click("option[value='-1']")
-        self.sleep(3)
+        # self.scroll_to(self.NAME)
+        # select_element = self.find_element(self.SHOW)
+        # # Click the 'Show Entries' dropdown and select the "All" option
+        # select_element.click()
+        # self.click("option[value='-1']")
+        # self.sleep(3)
 
 
         # Click the column header to trigger sorting
@@ -200,9 +196,8 @@ class WarehouseUserTest(LoginPage, UserPage):
         if visible_rows:
             last_visible_row = visible_rows[-1]
             self.driver.execute_script("arguments[0].scrollIntoView();", last_visible_row)
-            self.sleep(1)  # Add a short delay to allow scrolling to complete
+            # self.sleep(1)  # Add a short delay to allow scrolling to complete
 
-            # Extract the necessary data for comparison
             # Extract the necessary data for comparison
             first_row_name = visible_rows[0].find_element(By.XPATH, "./td[1]").text
             last_row_name = last_visible_row.find_element(By.XPATH, "./td[1]").text
@@ -214,16 +209,22 @@ class WarehouseUserTest(LoginPage, UserPage):
             # Handle case where no rows are visible after sorting
             raise AssertionError("No visible rows found after sorting")
         
-
-    def test_edit(self):    
+        self.sleep(3)
+        
+    # def test_edit(self):
+    #     self.sleep(3)
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        self.test_warehouse_users()
+        # self.test_warehouse_users()
         # row_index = 1
         # Construct the XPath for the dropdown toggle button within the specified table row
         # dropdown_toggle_xpath = f'//*[@id="app-users"]/tbody/tr[{row_index}]/td[8]/div'
-        self.scroll_to(self.TR1)
-        dropdown_toggle_xpath = self.TR1
+        # self.scroll_to(self.TR1)
+        # first_visible_row = visible_rows[1]
+        # dropdown_toggle_xpath = '//*[@id="app-users"]/tbody/tr[1]' 
 
+        # table_row = dropdown_menu.find_element(By.XPATH, '//*[@id="app-users"]/tbody/tr[1]/td[8]')
+        # self.driver.execute_script("arguments[0].scrollIntoView();", table_row)
+        self.scroll_up_header()
         # Locate the dropdown toggle button
         # dropdown_toggle = self.driver.find_element(By.XPATH, dropdown_toggle_xpath)
 
@@ -232,7 +233,8 @@ class WarehouseUserTest(LoginPage, UserPage):
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
-        dropdown_toggle.click()
+        self.click(self.TR1)
+        self.sleep(2)
 
         # Wait for the dropdown menu to appear
         dropdown_menu_xpath = f'//*[@id="app-users"]/tbody/tr[1]/td[8]/div/div[@class="dropdown-menu show"]'
@@ -258,8 +260,10 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.assert_text("App user updated successfully!", self.POPUP)
         self.sleep(3)
 
-    def test_delete(self):
-        self.test_warehouse_users()
+
+    #>>>>>>>>>>>>>>>>>>>>>>>>> DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # def test_delete(self):
+    #     self.warehouse_nav()
         # Perform assertions 
         self.scroll_to(self.TR1)
         dropdown_toggle_xpath = self.TR1
@@ -289,11 +293,4 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         alert.accept()
         self.assert_element_visible(self.POPUP)
-        self.assert_text("Impersonation deactivated!", self.POPUP)
-
-
-        # # Handle the delete confirmation (if applicable)
-        # confirm_delete_button = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Delete")]')))
-        # confirm_delete_button.click()
-
-        # Perform assertions 
+        self.assert_text("User deleted!", self.POPUP)

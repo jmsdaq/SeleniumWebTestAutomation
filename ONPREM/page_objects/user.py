@@ -19,7 +19,7 @@ class UserPage(BaseCase):
     ADD_BTN = ".btn.btn-success"
     NAME = '#user_name.form-control'
     EMPLOYEE_CODE = 'input#user_employee_code.form-control'
-    USERNAME = 'input#user_username.form-control'
+    USERNAME = 'input#user_username'
     PASSWORD = 'input#user_password.form-control'
     PIN = 'input#user_pin.form-control'
     OPERATIONAL_ROLE = 'select#user_operation_role.form-select'
@@ -42,11 +42,35 @@ class UserPage(BaseCase):
     # SHOW ENTRIES LOCATORS
     SHOW = "select[name='app-users_length']"
 
+
+    TR1 = '//*[@id="app-users"]/tbody/tr[1]/td[8]/div'
+
     # EDIT LOCATORS
     EDIT_MODAL_TITLE = ".modal-title fs-5"
+    UPDATE_BTN = 'input[type="submit"][value="Update User"]'
 
     # ONPREM LOCATORS
     ONPREM_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/users"]'
+
+
+    def user_nav(self):
+        self.wait_for_element(self.SIDEBAR_ACTIVE)
+        self.assert_element(self.SIDEBAR_ACTIVE) 
+        self.click(self.USER_MENU) 
+
+    def warehouse_nav(self):
+        self.wait_for_element(self.SIDEBAR_ACTIVE)
+        self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
+        self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
+        self.sleep(2)
+        self.click(self.WAREHOUSE_MENU)
+
+    def onprem_user_nav(self):
+        self.wait_for_element(self.SIDEBAR_ACTIVE)
+        self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
+        self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
+        self.sleep(2)
+        self.click(self.WAREHOUSE_MENU)
 
     def scroll_with_actions(self, element):
         # Scroll down to the specified element using ActionChains
@@ -56,6 +80,10 @@ class UserPage(BaseCase):
 
     def scroll_up(self):
         header_element = self.find_element(".modal-header")
+        self.scroll_with_actions(header_element)
+    
+    def scroll_up_header(self):
+        header_element = self.find_element(".table-light")
         self.scroll_with_actions(header_element)
 
     def scroll_down(self):
@@ -73,10 +101,3 @@ class UserPage(BaseCase):
             'operation_role': faker.random_element(elements=["cashier", "picker", "packer", "checker", "supervisor", "dispatcher"])
         }
         return user_data
-
-    def warehouse_navigation(self):
-        self.wait_for_element(self.SIDEBAR_ACTIVE)
-        self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
-        self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
-        self.sleep(2)
-        self.click(self.WAREHOUSE_MENU) 
