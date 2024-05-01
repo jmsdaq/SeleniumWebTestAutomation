@@ -218,7 +218,7 @@ class WarehouseUserTest(LoginPage, UserPage):
     def test_edit(self):    
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         self.test_warehouse_users()
-        row_index = 1
+        # row_index = 1
         # Construct the XPath for the dropdown toggle button within the specified table row
         # dropdown_toggle_xpath = f'//*[@id="app-users"]/tbody/tr[{row_index}]/td[8]/div'
         self.scroll_to(self.TR1)
@@ -239,8 +239,8 @@ class WarehouseUserTest(LoginPage, UserPage):
         dropdown_menu = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, dropdown_menu_xpath)))
 
         # Locate the "Edit" and "Delete" links within the dropdown menu
+        # edit_link = self.element(f'{dropdown_menu} a.dropdown-item[text()="Edit"]')
         edit_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Edit")]')
-        # delete_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Delete")]')
 
         # Click the "Edit" link
         edit_link.click()
@@ -258,10 +258,25 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.assert_text("App user updated successfully!", self.POPUP)
         self.sleep(3)
 
-
+    def test_delete(self):
+        self.test_warehouse_users()
         # Perform assertions 
+        self.scroll_to(self.TR1)
+        dropdown_toggle_xpath = self.TR1
 
-        # Click the "Delete" link
+        # Use WebDriverWait to wait for the element to be present and visible
+        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
+        dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.TR1)))
+
+        # Click the dropdown toggle button to open the dropdown menu    
+        dropdown_toggle.click()
+
+        # Wait for the dropdown menu to appear
+        dropdown_menu_xpath = f'//*[@id="app-users"]/tbody/tr[1]/td[8]/div/div[@class="dropdown-menu show"]'
+        dropdown_menu = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, dropdown_menu_xpath)))
+
+        # Locate the "Edit" and "Delete" links within the dropdown menu
+        delete_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Delete")]')
         delete_link.click()
         
         WebDriverWait(self.driver, 5).until(EC.alert_is_present())
@@ -272,8 +287,13 @@ class WarehouseUserTest(LoginPage, UserPage):
         expected_text = "Delete user?"
         assert expected_text in dialog_text
 
-        # Handle the delete confirmation (if applicable)
-        confirm_delete_button = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Delete")]')))
-        confirm_delete_button.click()
+        alert.accept()
+        self.assert_element_visible(self.POPUP)
+        self.assert_text("Impersonation deactivated!", self.POPUP)
+
+
+        # # Handle the delete confirmation (if applicable)
+        # confirm_delete_button = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//button[contains(text(), "Delete")]')))
+        # confirm_delete_button.click()
 
         # Perform assertions 
