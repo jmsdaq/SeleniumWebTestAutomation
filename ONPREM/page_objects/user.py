@@ -60,6 +60,8 @@ class UserPage(BaseCase):
     ON_PW_CONF = 'input#nadmin_user_password_confirmation.form-control'
     ON_ROLE = '#nadmin_user_role_id'
     ON_SEARCH = 'input[type="search"][aria-controls="nadmin-users"]'
+    ON_SHOW = "select[name='nadmin-users_length']"
+    ON_TABLE_ROWS = '#nadmin-users tbody tr'
 
 
     def user_nav(self):

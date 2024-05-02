@@ -63,7 +63,18 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.click(self.SUBMIT)
         self.sleep(2)
 
-        # >>>>>>>>>>>>>>>>>>>>> TEST SEARCH <<<<<<<<<<<<<<<
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>> SEARCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        # CHECK NO MATCHING RECORD FOUND
+        wait = WebDriverWait(self.driver, 10)
+        search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
+
+        search_input.send_keys("Hefefhsocnciasfhosd")
+        self.sleep(2)
+        empty_message = self.find_element(self.EMPTY_TABLE)
+        self.assertTrue(empty_message.is_displayed(), "No matching records message is not displayed")
+        self.sleep(3)
+
+        # TEST MATCH
         # Wait for the search input to be visible and interactable
         wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
@@ -74,15 +85,99 @@ class WarehouseUserTest(LoginPage, UserPage):
         search_input.send_keys(username)
 
         # Wait for the table rows to update based on the search query (wait for presence of table rows)
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, self.TABLE_ROWS)))
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, self.ON_TABLE_ROWS)))
 
         # Get all table rows within the table body
-        table_rows = self.driver.find_elements(By.XPATH, '//*[@id="app-users"]/tbody/tr')
+        table_rows = self.driver.find_elements(By.XPATH, '//*[@id="nadmin-users"]/tbody/tr')
 
         # Assert that the table has more than 0 rows after search
         self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
         self.sleep(3)
 
+        search_input = self.find_element(self.ON_SEARCH)
+        search_input.send_keys(Keys.CONTROL + 'a')  # Select all text in the input field
+        self.sleep(1)
+        search_input.send_keys(Keys.BACKSPACE)       # Delete the selected text
+        self.sleep(1)
+
+
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        select_element = self.find_element(self.ON_SHOW)
+        # Define a list of option values to test, including "-1" for "All" option
+        option_values = ["10", "50", "100", "-1"]
+        for option_value in option_values:
+            # Click the 'Show Entries' dropdown and select the current option value
+            select_element.click()
+            self.click(f"option[value='{option_value}']")
+            self.sleep(3)
+
+            # Scroll down to the bottom of the page to load all content
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            self.sleep(2)  # Add a short delay to ensure the content is fully loaded
+
+            # Wait for the table content to load after scrolling (adjust timeout as needed)
+            self.wait_for_element("#nadmin-users tbody tr")
+
+            # Find all table rows within the table body
+            table_rows = self.find_elements("#nadmin-users tbody tr")
+
+            # Determine the expected number of rows based on the selected option value
+            if option_value == "-1":
+                expected_row_count = len(table_rows)  # All rows should be displayed
+            else:
+                expected_row_count = int(option_value)  # Convert to integer
+
+            # Get the actual number of rows displayed on the page
+            actual_row_count = len(table_rows)
+            
+            # Assert that the actual row count is less than or equal to the expected row count
+            assert actual_row_count <= expected_row_count, (
+                f"Expected {expected_row_count} rows or fewer, but found {actual_row_count} rows for option value '{option_value}'"
+            )
+            # Scroll back up to the top of the page for the next iteration
+            self.driver.execute_script("window.scrollTo(0, 0);")
+            self.sleep(1)  # Add a short delay to ensure scrolling is complete
+        self.sleep(3)
+
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # def test_sorting_table_column(self):
+    #     self.warehouse_nav()
+
+        # Click the column header to trigger sorting
+        name_column_header = self.find_element(By.XPATH, '//th[contains(text(), "Name")]')
+        name_column_header.click()
+
+        # Wait for the table content to reload after sorting (adjust timeout as needed)
+        wait = WebDriverWait(self.driver, 3)  # Adjust timeout as needed
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#nadmin-users tbody tr")))
+
+        # Find all visible rows in the table
+        visible_rows = self.find_elements("#nadmin-users tbody tr")
+
+            # Refresh the list of visible rows after sorting
+        try:
+            visible_rows = self.find_elements("#nadmin-users tbody tr")
+        except StaleElementReferenceException:
+            pass
+
+        # Scroll to the last visible row to observe the sorting result
+        if visible_rows:
+            last_visible_row = visible_rows[-1]
+            self.driver.execute_script("arguments[0].scrollIntoView();", last_visible_row)
+            # self.sleep(1)  # Add a short delay to allow scrolling to complete
+
+            # Extract the necessary data for comparison
+            first_row_name = visible_rows[0].find_element(By.XPATH, "./td[1]").text
+            last_row_name = last_visible_row.find_element(By.XPATH, "./td[1]").text
+
+            # Assert that the first row's name is less than or equal to the last row's name
+            assert first_row_name <= last_row_name, "Sorting order is incorrect"
+
+        else:
+            # Handle case where no rows are visible after sorting
+            raise AssertionError("No visible rows found after sorting")
+        
+        self.sleep(3)
         # # TEST VALID INPUT
         # # Generate fake user data using the helper method
         # user_data = self.generate_fake_user_data()
