@@ -25,6 +25,8 @@ class WarehouseUserTest(LoginPage, UserPage):
     
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADD WAREHOUSE USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # def test_other(self):
+        # CLICK CLOSE ICON
+        # self.wait_for_element(self.ADD_BTN)
 
         wait = WebDriverWait(self.driver, 10)
         add_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ADD_BTN)))
@@ -49,6 +51,16 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         self.sleep(2)
         self.assert_element(self.DANGER)  # Ensure errors element is present
+
+        # TEST VALID USER DATA
+        password = "intern_james"
+        self.type(self.ON_USERNAME, onprem_data['username'])
+        self.type(self.ON_NAME, onprem_data['name'])
+        self.type(self.ON_PW, password)
+        self.type(self.ON_PW_CONF, password)
+        self.select_option_by_text(self.ON_ROLE, onprem_data['role'])
+        self.click(self.SUBMIT)
+        self.sleep(2)
 
         # # TEST VALID INPUT
         # # Generate fake user data using the helper method
