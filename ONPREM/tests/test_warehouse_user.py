@@ -19,17 +19,22 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(10) 
         super().tearDown()
 
+    # >>>>>>>>>>>>>>>>>>>>> NAVIGATION TO WAREHOUSE USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<
     def test_warehouse_user(self):
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>> NAVIGATION TO WAREHOUSE USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         self.warehouse_nav()
     
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADD WAREHOUSE USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # def test_other(self):
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADD WAREHOUSE USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # CLICK CLOSE ICON
-        self.wait_for_element(self.ADD_BTN)
-        self.click(self.ADD_BTN)
+        # self.wait_for_element(self.ADD_BTN)
+
+        wait = WebDriverWait(self.driver, 10)
+        add_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ADD_BTN)))
+        add_btn.click()
+        # self.click(self.ADD_BTN)
         self.wait_for_element(self.MODAL)
         self.click(self.CLOSE_ICON)
+        self.sleep(1)
 
         # CLICK THE CLOSE BUTTON
         self.click(self.ADD_BTN)
@@ -37,6 +42,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.scroll_to(self.CLOSE_BTN) # scroll down method
         self.wait_for_element(self.CLOSE_BTN)
         self.click(self.CLOSE_BTN)
+        self.sleep(1)
         
         # TEST ERRORS IN ADDING NEW USER
         self.click(self.ADD_BTN)
@@ -122,6 +128,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         search_input.send_keys(Keys.CONTROL + 'a')  # Select all text in the input field
         self.sleep(1)
         search_input.send_keys(Keys.BACKSPACE)       # Delete the selected text
+        self.sleep(1)
 
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -167,14 +174,6 @@ class WarehouseUserTest(LoginPage, UserPage):
     # def test_sorting_table_column(self):
     #     self.warehouse_nav()
 
-        # self.scroll_to(self.NAME)
-        # select_element = self.find_element(self.SHOW)
-        # # Click the 'Show Entries' dropdown and select the "All" option
-        # select_element.click()
-        # self.click("option[value='-1']")
-        # self.sleep(3)
-
-
         # Click the column header to trigger sorting
         name_column_header = self.find_element(By.XPATH, '//th[contains(text(), "Name")]')
         name_column_header.click()
@@ -211,23 +210,12 @@ class WarehouseUserTest(LoginPage, UserPage):
         
         self.sleep(3)
         
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # def test_edit(self):
-    #     self.sleep(3)
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # self.test_warehouse_users()
-        # row_index = 1
-        # Construct the XPath for the dropdown toggle button within the specified table row
-        # dropdown_toggle_xpath = f'//*[@id="app-users"]/tbody/tr[{row_index}]/td[8]/div'
-        # self.scroll_to(self.TR1)
-        # first_visible_row = visible_rows[1]
-        # dropdown_toggle_xpath = '//*[@id="app-users"]/tbody/tr[1]' 
 
-        # table_row = dropdown_menu.find_element(By.XPATH, '//*[@id="app-users"]/tbody/tr[1]/td[8]')
-        # self.driver.execute_script("arguments[0].scrollIntoView();", table_row)
         self.scroll_up_header()
         # Locate the dropdown toggle button
-        # dropdown_toggle = self.driver.find_element(By.XPATH, dropdown_toggle_xpath)
-
         # Use WebDriverWait to wait for the element to be present and visible
         wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.TR1)))
@@ -251,7 +239,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.assert_text("Edit Warehouse User", "h1")
         self.type(self.USERNAME, "james")
 
-        # # Wait until the username input field contains the expected value
+        # # # Wait until the username input field contains the expected value
         # wait = WebDriverWait(self.driver, 10)
         # wait.until(EC.text_to_be_present_in_element_value(self.USERNAME, "james"))
 
@@ -261,7 +249,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(3)
 
 
-    #>>>>>>>>>>>>>>>>>>>>>>>>> DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # def test_delete(self):
     #     self.warehouse_nav()
         # Perform assertions 
