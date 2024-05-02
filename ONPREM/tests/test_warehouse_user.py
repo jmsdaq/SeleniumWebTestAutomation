@@ -56,17 +56,17 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # TEST VALID INPUT
         # Generate fake user data using the helper method
-        user_data = self.generate_fake_user_data()
+        wh_data = self.generate_fake_user_data()
 
         # Fill in the form fields with generated fake data
         # self.type(self.NAME, user_data['name'])
         self.type(self.NAME, "intern_james")
-        self.type(self.EMPLOYEE_CODE, str(user_data['employee_code']))
-        username = user_data['username']  # Store the generated username
+        self.type(self.EMPLOYEE_CODE, str(wh_data['employee_code']))
+        username = wh_data['username']  # Store the generated username
         self.type(self.USERNAME, username)
-        self.type(self.PASSWORD, user_data['password'])
-        self.type(self.PIN, str(user_data['pin']))
-        self.select_option_by_text(self.OPERATIONAL_ROLE, user_data['operation_role'])
+        self.type(self.PASSWORD, wh_data['password'])
+        self.type(self.PIN, str(wh_data['pin']))
+        self.select_option_by_text(self.OPERATIONAL_ROLE, wh_data['operation_role'])
         self.click(self.SUBMIT)
         self.sleep(2)
 
