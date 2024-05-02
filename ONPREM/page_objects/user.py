@@ -17,10 +17,11 @@ class UserPage(BaseCase):
     # ADD FORM LOCALTORS
     MODAL = "#appModalContent"
     ADD_BTN = ".btn.btn-success"
-    NAME = '#user_name.form-control'
+    NAME = 'input#user_name.form-control'
     EMPLOYEE_CODE = 'input#user_employee_code.form-control'
     USERNAME = 'input#user_username'
     PASSWORD = 'input#user_password.form-control'
+    PASSWORD_CONF = 'input#user_password_confirmation.form-control'
     PIN = 'input#user_pin.form-control'
     OPERATIONAL_ROLE = 'select#user_operation_role.form-select'
     SUBMIT = 'input[type="submit"]'
@@ -51,6 +52,13 @@ class UserPage(BaseCase):
 
     # ONPREM LOCATORS
     ONPREM_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/users"]'
+    ADD_USER_PAGE = '.card-title'
+    DANGER = 'div.text-danger'
+    ON_USERNAME = 'input#nadmin_user_username.form-control'
+    ON_NAME = 'input#nadmin_user_name.form-control'
+    ON_PW = 'input#nadmin_user_password.form-control'
+    ON_PW_CONF = 'input#nadmin_user_password_confirmation.form-control'
+    ON_ROLE = '#nadmin_user_role_id'
 
 
     def user_nav(self):
@@ -61,6 +69,7 @@ class UserPage(BaseCase):
     def warehouse_nav(self):
         self.wait_for_element(self.SIDEBAR_ACTIVE)
         self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
+        self.sleep(2)
         self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
         self.sleep(2)
         self.click(self.WAREHOUSE_MENU)
@@ -68,9 +77,10 @@ class UserPage(BaseCase):
     def onprem_user_nav(self):
         self.wait_for_element(self.SIDEBAR_ACTIVE)
         self.assert_element(self.SIDEBAR_ACTIVE)  # Verify if the sidebar is active (from PartnersPage)
+        self.sleep(2)
         self.click(self.USER_MENU)  # Click on the Partner Accounts menu (from PartnersPage)
         self.sleep(2)
-        self.click(self.WAREHOUSE_MENU)
+        self.click(self.ONPREM_MENU)
 
     def scroll_with_actions(self, element):
         # Scroll down to the specified element using ActionChains
@@ -90,9 +100,9 @@ class UserPage(BaseCase):
         footer_element = self.find_element(".modal-footer")
         self.scroll_with_actions(footer_element)
 
-    def generate_fake_user_data(self):
+    def generate_fake_warehouse_data(self):
         faker = Faker()
-        user_data = {
+        wh_data = {
             'name': faker.name(),
             'employee_code': faker.random_number(digits=6),
             'username': faker.user_name(),
@@ -100,4 +110,14 @@ class UserPage(BaseCase):
             'pin': faker.random_number(digits=4),
             'operation_role': faker.random_element(elements=["cashier", "picker", "packer", "checker", "supervisor", "dispatcher"])
         }
-        return user_data
+        return wh_data
+    
+    def generate_fake_onprem_data(self):
+        faker = Faker()
+        onprem_data = {
+            'name': faker.name(),
+            'username': faker.user_name(),
+            'password': faker.password(length=10, special_chars=True, digits=True),
+            'role': faker.random_element(elements=["admin", "warehouse", "Assistant admin", "test role", "TestRaj", "Intern"])
+        }
+        return onprem_data
