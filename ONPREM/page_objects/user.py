@@ -52,7 +52,7 @@ class UserPage(BaseCase):
 
     # ONPREM LOCATORS
     ONPREM_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/users"]'
-    ADD_USER_PAGE = '.card-title'
+    CARD_TITLE = '.card-title'
     DANGER = 'div.text-danger'
     ON_USERNAME = 'input#nadmin_user_username.form-control'
     ON_NAME = 'input#nadmin_user_name.form-control'
@@ -62,6 +62,7 @@ class UserPage(BaseCase):
     ON_SEARCH = 'input[type="search"][aria-controls="nadmin-users"]'
     ON_SHOW = "select[name='nadmin-users_length']"
     ON_TABLE_ROWS = '#nadmin-users tbody tr'
+    ON_TR1 = '//*[@id="nadmin-users"]/tbody/tr[1]/td[8]/div'
 
 
     def user_nav(self):
