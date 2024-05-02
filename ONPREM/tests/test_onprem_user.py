@@ -54,13 +54,34 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # TEST VALID USER DATA
         password = "intern_james"
-        self.type(self.ON_USERNAME, onprem_data['username'])
+        username = onprem_data['username']
+        self.type(self.ON_USERNAME, username)
         self.type(self.ON_NAME, onprem_data['name'])
         self.type(self.ON_PW, password)
         self.type(self.ON_PW_CONF, password)
         self.select_option_by_text(self.ON_ROLE, onprem_data['role'])
         self.click(self.SUBMIT)
         self.sleep(2)
+
+        # >>>>>>>>>>>>>>>>>>>>> TEST SEARCH <<<<<<<<<<<<<<<
+        # Wait for the search input to be visible and interactable
+        wait = WebDriverWait(self.driver, 10)
+        search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
+        self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
+
+        search_input.clear()
+        search_input.send_keys(username)
+
+        # Wait for the table rows to update based on the search query (wait for presence of table rows)
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, self.TABLE_ROWS)))
+
+        # Get all table rows within the table body
+        table_rows = self.driver.find_elements(By.XPATH, '//*[@id="app-users"]/tbody/tr')
+
+        # Assert that the table has more than 0 rows after search
+        self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
+        self.sleep(3)
 
         # # TEST VALID INPUT
         # # Generate fake user data using the helper method

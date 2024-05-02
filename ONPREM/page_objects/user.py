@@ -59,6 +59,7 @@ class UserPage(BaseCase):
     ON_PW = 'input#nadmin_user_password.form-control'
     ON_PW_CONF = 'input#nadmin_user_password_confirmation.form-control'
     ON_ROLE = '#nadmin_user_role_id'
+    ON_SEARCH = 'input[type="search"][aria-controls="nadmin-users"]'
 
 
     def user_nav(self):
@@ -118,6 +119,6 @@ class UserPage(BaseCase):
             'name': faker.name(),
             'username': faker.user_name(),
             'password': faker.password(length=10, special_chars=True, digits=True),
-            'role': faker.random_element(elements=["admin", "warehouse", "Assistant admin", "test role", "TestRaj", "Intern"])
+            'role': faker.random_element(elements=["admin", "warehouse", "Assistant Admin", "test role", "TestRaj", "Intern"])
         }
         return onprem_data
