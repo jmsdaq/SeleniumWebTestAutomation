@@ -56,7 +56,7 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # TEST VALID INPUT
         # Generate fake user data using the helper method
-        wh_data = self.generate_fake_user_data()
+        wh_data = self.generate_fake_warehouse_data()
 
         # Fill in the form fields with generated fake data
         # self.type(self.NAME, user_data['name'])
@@ -281,4 +281,4 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         alert.accept()
         self.assert_element_visible(self.POPUP)
-        self.assert_text("User deleted!", self.POPUP)
+        self.assert_text("User deleted!", "h2")
