@@ -94,6 +94,76 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
         self.sleep(3)
 
+
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # def test_edit(self):
+        # self.test_warehouse_users()
+
+        self.scroll_up_header()
+        # Locate the dropdown toggle button
+        # Use WebDriverWait to wait for the element to be present and visible
+        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
+        dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ON_TR1)))
+
+        # Click the dropdown toggle button to open the dropdown menu    
+        self.click(self.ON_TR1)
+        self.sleep(2)
+
+        # Wait for the dropdown menu to appear
+        dropdown_menu_xpath = f'//*[@id="nadmin-users"]/tbody/tr[1]/td[6]/div/div'
+        dropdown_menu = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, dropdown_menu_xpath)))
+
+        # Locate the "Edit" and "Delete" links within the dropdown menu
+        # edit_link = self.element(f'{dropdown_menu} a.dropdown-item[text()="Edit"]')
+        edit_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Edit")]')
+
+        # Click the "Edit" link
+        edit_link.click()
+        # self.wait_for_element(self.CARD _TITLE)
+        # self.scroll_up()
+        self.assert_text("Edit OnPrem User", "h5")
+        self.select_option_by_text(self.ON_ROLE, onprem_data['role'])
+        self.click(self.UPDATE_BTN)
+        self.assert_text("User updated!", self.POPUP)
+        self.sleep(3)
+
+
+    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # def test_delete(self):
+    #     self.warehouse_nav()
+        # Perform assertions 
+        self.scroll_to(self.ON_TR1)
+        dropdown_toggle_xpath = self.ON_TR1
+
+        # Use WebDriverWait to wait for the element to be present and visible
+        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
+        dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ON_TR1)))
+
+        # Click the dropdown toggle button to open the dropdown menu    
+        dropdown_toggle.click()
+
+        # Wait for the dropdown menu to appear
+        dropdown_menu_xpath = f'//*[@id="nadmin-users"]/tbody/tr[1]/td[6]/div/div'
+        dropdown_menu = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, dropdown_menu_xpath)))
+
+        # Locate the "Edit" and "Delete" links within the dropdown menu
+        delete_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Delete")]')
+        delete_link.click()
+        
+        WebDriverWait(self.driver, 5).until(EC.alert_is_present())
+        alert = self.driver.switch_to.alert     # Switch to the alert dialog
+        dialog_text = alert.text    # Retrieve the text of the confirmation dialog
+    
+        # Assert or check the text of the confirmation dialog
+        expected_text = "Delete user?"
+        assert expected_text in dialog_text
+
+        alert.accept()
+        self.assert_element_visible(self.POPUP)
+        self.sleep(3)
+
+
+
         search_input = self.find_element(self.ON_SEARCH)
         search_input.send_keys(Keys.CONTROL + 'a')  # Select all text in the input field
         self.sleep(1)
@@ -195,73 +265,14 @@ class WarehouseUserTest(LoginPage, UserPage):
         
         self.sleep(3)
 
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # def test_edit(self):
-        # self.test_warehouse_users()
-
-        self.scroll_up_header()
-        # Locate the dropdown toggle button
-        # Use WebDriverWait to wait for the element to be present and visible
-        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
-        dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ON_TR1)))
-
-        # Click the dropdown toggle button to open the dropdown menu    
-        self.click(self.ON_TR1)
-        self.sleep(2)
-
-        # Wait for the dropdown menu to appear
-        dropdown_menu_xpath = f'//*[@id="nadmin-users"]/tbody/tr[1]/td[6]/div/div'
-        dropdown_menu = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, dropdown_menu_xpath)))
-
-        # Locate the "Edit" and "Delete" links within the dropdown menu
-        # edit_link = self.element(f'{dropdown_menu} a.dropdown-item[text()="Edit"]')
-        edit_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Edit")]')
-
-        # Click the "Edit" link
-        edit_link.click()
-        # self.wait_for_element(self.CARD _TITLE)
-        # self.scroll_up()
-        self.assert_text("Edit OnPrem User", "h5")
-        self.select_option_by_text(self.ON_ROLE, onprem_data['role'])
-        self.click(self.UPDATE_BTN)
-        self.assert_text("User updated!", self.POPUP)
-        self.sleep(3)
-
-
-    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # def test_delete(self):
-    #     self.warehouse_nav()
-        # Perform assertions 
-        self.scroll_to(self.ON_TR1)
-        dropdown_toggle_xpath = self.ON_TR1
-
-        # Use WebDriverWait to wait for the element to be present and visible
-        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
-        dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ON_TR1)))
-
-        # Click the dropdown toggle button to open the dropdown menu    
-        dropdown_toggle.click()
-
-        # Wait for the dropdown menu to appear
-        dropdown_menu_xpath = f'//*[@id="nadmin-users"]/tbody/tr[1]/td[6]/div/div'
-        dropdown_menu = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, dropdown_menu_xpath)))
-
-        # Locate the "Edit" and "Delete" links within the dropdown menu
-        delete_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Delete")]')
-        delete_link.click()
-        
-        WebDriverWait(self.driver, 5).until(EC.alert_is_present())
-        alert = self.driver.switch_to.alert     # Switch to the alert dialog
-        dialog_text = alert.text    # Retrieve the text of the confirmation dialog
-    
-        # Assert or check the text of the confirmation dialog
-        expected_text = "Delete user?"
-        assert expected_text in dialog_text
-
-        alert.accept()
-        self.assert_element_visible(self.POPUP)
-        self.sleep(3)
 
         #>>>>>>>>>>>>>>>>>>>>> ONPREM: USER ABILITIES <<<<<<<<<<<<<<<<<<<
         self.click(self.ABILITIES)
         self.assert_text("Onprem Abilities", "h5")
+        self.sleep(3)
+
+        #>>>>>>>>>>>>>>>>>>>>> ONPREM: USER ROLE <<<<<<<<<<<<<<<<<<<
+        self.click(self.ROLE)
+        self.assert_text("OnPrem Roles", "h5")
+
+        

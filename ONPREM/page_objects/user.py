@@ -61,11 +61,15 @@ class UserPage(BaseCase):
     ON_ROLE = '#nadmin_user_role_id'
     ON_SEARCH = 'input[type="search"][aria-controls="nadmin-users"]'
     ON_SHOW = "select[name='nadmin-users_length']"
-    ON_TABLE_ROWS = '#nadmin-users tbody tr'
+    ON_TABLE_ROWS = '#nadmin-users tbody tr'    
     ON_TR1 = '//*[@id="nadmin-users"]/tbody/tr[1]/td[6]/div'
 
     # ONPREM: ABILITIES LOCATORS
     ABILITIES = "#user-abilities"
+
+    # ONPREM: ROLE
+    ROLE = "#user-roles"
+    
 
     def user_nav(self):
         self.wait_for_element(self.SIDEBAR_ACTIVE)
