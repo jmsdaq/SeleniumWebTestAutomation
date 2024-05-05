@@ -129,73 +129,31 @@ class WarehouseUserTest(LoginPage, UserPage):
 
             # Get the actual number of rows displayed on the page
             actual_row_count = len(table_rows)
-            
+
             # Assert that the actual row count is less than or equal to the expected row count
             assert actual_row_count <= expected_row_count, (
                 f"Expected {expected_row_count} rows or fewer, but found {actual_row_count} rows for option value '{option_value}'"
             )
+
+            # Get the text of the element indicating the number of entries shown
+            entries_info = self.find_element("#nadmin-users_info").text
+
+            # Extract the numbers indicating the range of entries shown
+            shown_entries = [int(s) for s in entries_info.split() if s.isdigit()]
+
+            # Extract the expected upper limit of the range based on the selected option value
+            expected_upper_limit = min(expected_row_count, actual_row_count)
+
+            # Check if the displayed range matches the selected option value
+            assert shown_entries[:2] == [1, expected_upper_limit], (
+                f"Expected to show 1 to {expected_upper_limit} entries, "
+                f"but found {entries_info}"
+            )
+
             # Scroll back up to the top of the page for the next iteration
             self.driver.execute_script("window.scrollTo(0, 0);")
             self.sleep(1)  # Add a short delay to ensure scrolling is complete
         self.sleep(3)
-
-
-        # # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        # select_element = self.find_element(self.ON_SHOW)
-        # # Define a list of option values to test, including "-1" for "All" option
-        # option_values = ["10", "50", "100", "-1"]
-        # for option_value in option_values:
-        #     # Click the 'Show Entries' dropdown and select the current option value
-        #     select_element.click()
-        #     self.click(f"option[value='{option_value}']")
-        #     self.sleep(3)
-
-        #     # Scroll down to the bottom of the page to load all content
-        #     self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        #     self.sleep(2)  # Add a short delay to ensure the content is fully loaded
-
-        #     # Wait for the table content to load after scrolling (adjust timeout as needed)
-        #     self.wait_for_element("#nadmin-users tbody tr")
-
-        #     # Find all table rows within the table body
-        #     table_rows = self.find_elements("#nadmin-users tbody tr")
-
-        #     # Determine the expected number of rows based on the selected option value
-        #     if option_value == "-1":
-        #         expected_row_count = len(table_rows)  # All rows should be displayed
-        #     else:
-        #         expected_row_count = int(option_value)  # Convert to integer
-
-        #     # Get the actual number of rows displayed on the page
-        #     actual_row_count = len(table_rows)
-
-        #     # Assert that the actual row count is less than or equal to the expected row count
-        #     assert actual_row_count <= expected_row_count, (
-        #         f"Expected {expected_row_count} rows or fewer, but found {actual_row_count} rows for option value '{option_value}'"
-        #     )
-
-        #     # Get the text of the element indicating the number of entries shown
-        #     entries_info = self.find_element("#nadmin-users_info").text
-
-        #     # Extract the numbers indicating the range of entries shown
-        #     shown_entries = [int(s) for s in entries_info.split() if s.isdigit()]
-
-        #     # Extract the expected upper limit of the range based on the selected option value
-        #     expected_upper_limit = min(expected_row_count, actual_row_count)
-
-        #     # Check if the displayed range matches the selected option value
-        #     assert shown_entries[:2] == [1, expected_upper_limit], (
-        #         f"Expected to show 1 to {expected_upper_limit} entries, "
-        #         f"but found {entries_info}"
-        #     )
-
-        #     # Scroll back up to the top of the page for the next iteration
-        #     self.driver.execute_script("window.scrollTo(0, 0);")
-        #     self.sleep(1)  # Add a short delay to ensure scrolling is complete
-        # self.sleep(3)
-
-
-
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # def test_sorting_table_column(self):
@@ -302,4 +260,3 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         alert.accept()
         self.assert_element_visible(self.POPUP)
-        self.assert_text("User deleted!", "h2")
