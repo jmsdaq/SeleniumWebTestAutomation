@@ -19,11 +19,11 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(10) 
         super().tearDown()
 
-    # >>>>>>>>>>>>>>>>>>>>> NAVIGATION TO WAREHOUSE USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<
+    # >>>>>>>>>>>>>>>>>>>>> NAVIGATION TO ONPREM USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<
     def test_warehouse_user(self):
         self.onprem_user_nav()
     
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADD WAREHOUSE USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADD ONPREM USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # def test_other(self):
         # CLICK CLOSE ICON
         # self.wait_for_element(self.ADD_BTN)
@@ -260,3 +260,8 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         alert.accept()
         self.assert_element_visible(self.POPUP)
+        self.sleep(3)
+
+        #>>>>>>>>>>>>>>>>>>>>> ONPREM: USER ABILITIES <<<<<<<<<<<<<<<<<<<
+        self.click(self.ABILITIES)
+        self.assert_text("Onprem Abilities", "h5")

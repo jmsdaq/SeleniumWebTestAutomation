@@ -50,7 +50,7 @@ class UserPage(BaseCase):
     EDIT_MODAL_TITLE = ".modal-title fs-5"
     UPDATE_BTN = 'input[type="submit"][value="Update User"]'
 
-    # ONPREM LOCATORS
+    # ONPREM: USER LOCATORS
     ONPREM_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/users"]'
     CARD_TITLE = '.card-title'
     DANGER = 'div.text-danger'
@@ -62,8 +62,10 @@ class UserPage(BaseCase):
     ON_SEARCH = 'input[type="search"][aria-controls="nadmin-users"]'
     ON_SHOW = "select[name='nadmin-users_length']"
     ON_TABLE_ROWS = '#nadmin-users tbody tr'
-    ON_TR1 = '//*[@id="nadmin-users"]/tbody/tr[1]/td[8]/div'
+    ON_TR1 = '//*[@id="nadmin-users"]/tbody/tr[1]/td[6]/div'
 
+    # ONPREM: ABILITIES LOCATORS
+    ABILITIES = "#user-abilities"
 
     def user_nav(self):
         self.wait_for_element(self.SIDEBAR_ACTIVE)
