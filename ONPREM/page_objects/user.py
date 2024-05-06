@@ -74,6 +74,9 @@ class UserPage(BaseCase):
     ROLE_SEARCH = 'input[type="search"][aria-controls="nadmin-roles"]'
     ROLE_TABLE_ROWS = '#nadmin-roles tbody tr'
     ROLE_ABILITIES = '//*[@id="nadmin-roles"]/tbody/tr[1]/td[4]/a'
+    ROLE_TR1 = '//*[@id="nadmin-roles"]/tbody/tr[1]/td[5]/div'
+    ROLE_SHOW = "select[name='nadmin-roles_length']"
+    ROLE_TR1_ABILITIES = '//*[@id="nadmin-roles"]/tbody/tr[1]/td[4]/a'
     
 
     def user_nav(self):
