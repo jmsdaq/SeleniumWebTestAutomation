@@ -268,15 +268,15 @@ class WarehouseUserTest(LoginPage, UserPage):
 
 
         #>>>>>>>>>>>>>>>>>>>>> ONPREM: USER ABILITIES <<<<<<<<<<<<<<<<<<<
-    def test_abilities(self):
-        onprem_data = self.generate_fake_onprem_data()
-        self.onprem_user_nav()
         self.click(self.ABILITIES)
         self.assert_text("Onprem Abilities", "h5")
         self.sleep(5)
 
+    def test_abilities(self):
+        onprem_data = self.generate_fake_onprem_data()
+        self.onprem_user_nav()
+
         #>>>>>>>>>>>>>>>>>>>>> ONPREM: USER ROLE <<<<<<<<<<<<<<<<<<<
-        
         # TEST ERRORS
         self.click(self.ROLE)
         self.click(self.ADD_BTN)
@@ -336,3 +336,12 @@ class WarehouseUserTest(LoginPage, UserPage):
         # Assert that the table has more than 0 rows after search
         self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
         self.sleep(3)
+
+
+        self.click(self.ROLE_ABILITIES)
+        self.assert_element(self.MODAL)
+        expected_title = name + " abilities"
+        actual_title = self.get_text(".modal-title.fs-5")
+        self.assert_equal(actual_title, expected_title)
+        self.sleep(2)
+        self.click(self.CLOSE_BTN)
