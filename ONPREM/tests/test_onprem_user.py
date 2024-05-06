@@ -276,10 +276,20 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(5)
 
         #>>>>>>>>>>>>>>>>>>>>> ONPREM: USER ROLE <<<<<<<<<<<<<<<<<<<
+        
+        # TEST ERRORS
         self.click(self.ROLE)
         self.click(self.ADD_BTN)
         self.assert_text("OnPrem Roles", "h5")
-        self.type(self.ROLE_NAME, onprem_data['name'])
+        self.type(self.ROLE_NAME, "Test")
+        self.click(self.SUBMIT)
+        self.sleep(2)
+
+        self.assert_element(self.ERRORS)  # Ensure errors element is present
+
+        # TEST VALID ADD ROLE
+        name = onprem_data['name']
+        self.type(self.ROLE_NAME, name)
         self.type(self.ROLE_DESC, "Test")
 
         self.wait_for_element_visible(".form-group")
@@ -294,4 +304,35 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.assert_text("Role created successfully!", "h2")
         self.sleep(2)
 
-        
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SEARCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        # CHECK NO MATCHING RECORD FOUND
+        wait = WebDriverWait(self.driver, 10)
+        search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ROLE_SEARCH)))
+        # self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
+
+        search_input.send_keys("#")
+        self.sleep(2)
+        empty_message = self.find_element(self.EMPTY_TABLE)
+        self.assertTrue(empty_message.is_displayed(), "No matching records message is not displayed")
+        self.assert_text("No matching records found", "td.dataTables_empty")
+        self.sleep(3)
+
+        # TEST SEARCH
+        # Wait for the search input to be visible and interactable
+        wait = WebDriverWait(self.driver, 10)
+        search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ROLE_SEARCH)))
+        self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ROLE_SEARCH)))
+
+        search_input.clear()
+        search_input.send_keys(name)
+
+        # Wait for the table rows to update based on the search query (wait for presence of table rows)
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, self.ROLE_TABLE_ROWS)))
+
+        # Get all table rows within the table body
+        table_rows = self.driver.find_elements(By.XPATH, '//*[@id="nadmin-roles"]/tbody/tr')
+
+        # Assert that the table has more than 0 rows after search
+        self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
+        self.sleep(3)

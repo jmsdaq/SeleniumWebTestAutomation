@@ -71,6 +71,8 @@ class UserPage(BaseCase):
     ROLE = "#user-roles"
     ROLE_NAME = "#nadmin_role_name"
     ROLE_DESC = "#nadmin_role_description"
+    ROLE_SEARCH = 'input[type="search"][aria-controls="nadmin-roles"]'
+    ROLE_TABLE_ROWS = '#nadmin-roles tbody tr'
 
     
 
