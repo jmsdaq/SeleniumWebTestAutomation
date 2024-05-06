@@ -61,7 +61,7 @@ class UserPage(BaseCase):
     ON_ROLE = '#nadmin_user_role_id'
     ON_SEARCH = 'input[type="search"][aria-controls="nadmin-users"]'
     ON_SHOW = "select[name='nadmin-users_length']"
-    ON_TABLE_ROWS = '#nadmin-users tbody tr'    
+    ON_TABLE_ROWS = '#nadmin-users tbody tr'
     ON_TR1 = '//*[@id="nadmin-users"]/tbody/tr[1]/td[6]/div'
 
     # ONPREM: ABILITIES LOCATORS
@@ -69,6 +69,9 @@ class UserPage(BaseCase):
 
     # ONPREM: ROLE
     ROLE = "#user-roles"
+    ROLE_NAME = "#nadmin_role_name"
+    ROLE_DESC = "#nadmin_role_description"
+
     
 
     def user_nav(self):

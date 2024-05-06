@@ -268,14 +268,30 @@ class WarehouseUserTest(LoginPage, UserPage):
 
 
         #>>>>>>>>>>>>>>>>>>>>> ONPREM: USER ABILITIES <<<<<<<<<<<<<<<<<<<
+    def test_abilities(self):
+        onprem_data = self.generate_fake_onprem_data()
+        self.onprem_user_nav()
         self.click(self.ABILITIES)
         self.assert_text("Onprem Abilities", "h5")
-        self.sleep(3)
+        self.sleep(5)
 
         #>>>>>>>>>>>>>>>>>>>>> ONPREM: USER ROLE <<<<<<<<<<<<<<<<<<<
         self.click(self.ROLE)
+        self.click(self.ADD_BTN)
         self.assert_text("OnPrem Roles", "h5")
+        self.type(self.ROLE_NAME, onprem_data['name'])
+        self.type(self.ROLE_DESC, "Test")
 
+        self.wait_for_element_visible(".form-group")
+        # Get all the ability list checkboxes
+        ability_checkboxes = self.find_elements("input[type='checkbox'][name='nadmin_role[ability_list][]']")
 
+        # Iterate through each checkbox and click on it
+        for checkbox in ability_checkboxes:
+            checkbox.click()
+
+        self.click(self.SUBMIT)
+        self.assert_text("Role created successfully!", "h2")
+        self.sleep(2)
 
         
