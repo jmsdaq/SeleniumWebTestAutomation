@@ -68,10 +68,11 @@ class WarehouseUserTest(LoginPage, UserPage):
         wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
 
-        search_input.send_keys("Hefefhsocnciasfhosd")
+        search_input.send_keys("#")
         self.sleep(2)
         empty_message = self.find_element(self.EMPTY_TABLE)
         self.assertTrue(empty_message.is_displayed(), "No matching records message is not displayed")
+        self.assert_text("No matching records found", "td.dataTables_empty")
         self.sleep(3)
 
         # TEST MATCH
@@ -274,5 +275,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         #>>>>>>>>>>>>>>>>>>>>> ONPREM: USER ROLE <<<<<<<<<<<<<<<<<<<
         self.click(self.ROLE)
         self.assert_text("OnPrem Roles", "h5")
+
+
 
         
