@@ -89,7 +89,6 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # TEST SEARCH
         # Wait for the search input to be visible and interactable
-        wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
         self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
@@ -115,7 +114,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.wait_for_element_visible(self.MODAL)
 
         # Wait for the file upload input to be clickable
-        wait = WebDriverWait(self.driver, 10)
         upload_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.CHOOSE_IMG)))
         
         # Upload the file using JavaScript to set the file path directly
@@ -135,7 +133,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.scroll_up_header()
         # Locate the dropdown toggle button
         # Use WebDriverWait to wait for the element to be present and visible
-        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -178,7 +175,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         dropdown_toggle_xpath = self.TR1
 
         # Use WebDriverWait to wait for the element to be present and visible
-        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -259,7 +255,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         name_column_header.click()
 
         # Wait for the table content to reload after sorting (adjust timeout as needed)
-        wait = WebDriverWait(self.driver, 3)  # Adjust timeout as needed
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#app-users tbody tr")))
 
         # Find all visible rows in the table

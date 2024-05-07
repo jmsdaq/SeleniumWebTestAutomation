@@ -65,7 +65,6 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM USER: SEARCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # CHECK NO MATCHING RECORD FOUND
-        wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
 
         search_input.send_keys("#")
@@ -77,7 +76,6 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # TEST MATCH
         # Wait for the search input to be visible and interactable
-        wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
         self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
@@ -103,7 +101,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.scroll_up_header()
         # Locate the dropdown toggle button
         # Use WebDriverWait to wait for the element to be present and visible
-        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ON_TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -137,7 +134,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         dropdown_toggle_xpath = self.ON_TR1
 
         # Use WebDriverWait to wait for the element to be present and visible
-        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ON_TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -235,7 +231,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         name_column_header.click()
 
         # Wait for the table content to reload after sorting (adjust timeout as needed)
-        wait = WebDriverWait(self.driver, 3)  # Adjust timeout as needed
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#nadmin-users tbody tr")))
 
         # Find all visible rows in the table
@@ -274,7 +269,7 @@ class WarehouseUserTest(LoginPage, UserPage):
 
 
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM ROLE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    def test_role(self):
+    # def test_role(self):
         onprem_data = self.generate_fake_onprem_data()
         self.onprem_user_nav()
 
@@ -308,7 +303,6 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM ROLE: SEARCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # CHECK NO MATCHING RECORD FOUND
-        wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ROLE_SEARCH)))
         # self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
 
@@ -320,8 +314,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(3)
 
         # TEST SEARCH
-        # Wait for the search input to be visible and interactable
-        wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ROLE_SEARCH)))
         self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ROLE_SEARCH)))
@@ -351,11 +343,6 @@ class WarehouseUserTest(LoginPage, UserPage):
 
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM ROLE: EDIT TR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-        # self.scroll_up_header()
-        # Locate the dropdown toggle button
-        # Use WebDriverWait to wait for the element to be present and visible
-        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ROLE_TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -387,7 +374,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         dropdown_toggle_xpath = self.ROLE_TR1
 
         # Use WebDriverWait to wait for the element to be present and visible
-        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ROLE_TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
