@@ -89,6 +89,7 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # TEST SEARCH
         # Wait for the search input to be visible and interactable
+        wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
         self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
@@ -114,6 +115,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.wait_for_element_visible(self.MODAL)
 
         # Wait for the file upload input to be clickable
+        wait = WebDriverWait(self.driver, 10)
         upload_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.CHOOSE_IMG)))
         
         # Upload the file using JavaScript to set the file path directly
@@ -133,6 +135,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.scroll_up_header()
         # Locate the dropdown toggle button
         # Use WebDriverWait to wait for the element to be present and visible
+        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -175,6 +178,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         dropdown_toggle_xpath = self.TR1
 
         # Use WebDriverWait to wait for the element to be present and visible
+        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -191,7 +195,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         WebDriverWait(self.driver, 5).until(EC.alert_is_present())
         alert = self.driver.switch_to.alert     # Switch to the alert dialog
         dialog_text = alert.text    # Retrieve the text of the confirmation dialog
-    
+        self.sleep(3)
         # Assert or check the text of the confirmation dialog
         expected_text = "Delete user?"
         assert expected_text in dialog_text
@@ -207,6 +211,8 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(2)
 
 
+    # def test_sort(self):
+    #     self.warehouse_nav()
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         select_element = self.find_element(self.SHOW)
         # Define a list of option values to test, including "-1" for "All" option
@@ -243,45 +249,10 @@ class WarehouseUserTest(LoginPage, UserPage):
             # Scroll back up to the top of the page for the next iteration
             self.driver.execute_script("window.scrollTo(0, 0);")
             self.sleep(1)  # Add a short delay to ensure scrolling is complete
-        self.sleep(3)
+        self.sleep(4)
     
 
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # def test_sorting_table_column(self):
-    #     self.warehouse_nav()
-
-        # Click the column header to trigger sorting
-        name_column_header = self.find_element(By.XPATH, '//th[contains(text(), "Name")]')
-        name_column_header.click()
-
-        # Wait for the table content to reload after sorting (adjust timeout as needed)
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#app-users tbody tr")))
-
-        # Find all visible rows in the table
-        visible_rows = self.find_elements("#app-users tbody tr")
-
-            # Refresh the list of visible rows after sorting
-        try:
-            visible_rows = self.find_elements("#app-users tbody tr")
-        except StaleElementReferenceException:
-            pass
-
-        # Scroll to the last visible row to observe the sorting result
-        if visible_rows:
-            last_visible_row = visible_rows[-1]
-            self.driver.execute_script("arguments[0].scrollIntoView();", last_visible_row)
-            # self.sleep(1)  # Add a short delay to allow scrolling to complete
-
-            # Extract the necessary data for comparison
-            first_row_name = visible_rows[0].find_element(By.XPATH, "./td[1]").text
-            last_row_name = last_visible_row.find_element(By.XPATH, "./td[1]").text
-
-            # Assert that the first row's name is less than or equal to the last row's name
-            assert first_row_name <= last_row_name, "Sorting order is incorrect"
-
-        else:
-            # Handle case where no rows are visible after sorting
-            raise AssertionError("No visible rows found after sorting")
-        
-        self.sleep(3)
-        
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  
+        self.sorting_helper("Name", "#app-users tbody tr")
+        self.sleep(5)
+        self.sorting_helper("Username", "#app-users tbody tr")

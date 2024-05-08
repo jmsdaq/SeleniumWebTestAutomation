@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import StaleElementReferenceException
 import os
 
-class WarehouseUserTest(LoginPage, UserPage):
+class OnpremUserTest(LoginPage, UserPage):
     def setUp(self):
         super().setUp()
         print("Running setup before test")
@@ -65,6 +65,7 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM USER: SEARCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # CHECK NO MATCHING RECORD FOUND
+        wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
 
         search_input.send_keys("#")
@@ -76,6 +77,7 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # TEST MATCH
         # Wait for the search input to be visible and interactable
+        wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
         self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ON_SEARCH)))
@@ -101,6 +103,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.scroll_up_header()
         # Locate the dropdown toggle button
         # Use WebDriverWait to wait for the element to be present and visible
+        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ON_TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -134,6 +137,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         dropdown_toggle_xpath = self.ON_TR1
 
         # Use WebDriverWait to wait for the element to be present and visible
+        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ON_TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -158,8 +162,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         alert.accept()
         self.assert_element_visible(self.POPUP)
         self.sleep(3)
-
-
 
         search_input = self.find_element(self.ON_SEARCH)
         search_input.send_keys(Keys.CONTROL + 'a')  # Select all text in the input field
@@ -225,41 +227,9 @@ class WarehouseUserTest(LoginPage, UserPage):
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM USER: SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # def test_sorting_table_column(self):
     #     self.warehouse_nav()
-
-        # Click the column header to trigger sorting
-        name_column_header = self.find_element(By.XPATH, '//th[contains(text(), "Username")]')
-        name_column_header.click()
-
-        # Wait for the table content to reload after sorting (adjust timeout as needed)
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "#nadmin-users tbody tr")))
-
-        # Find all visible rows in the table
-        visible_rows = self.find_elements("#nadmin-users tbody tr")
-
-            # Refresh the list of visible rows after sorting
-        try:
-            visible_rows = self.find_elements("#nadmin-users tbody tr")
-        except StaleElementReferenceException:
-            pass
-
-        # Scroll to the last visible row to observe the sorting result
-        if visible_rows:
-            last_visible_row = visible_rows[-1]
-            self.driver.execute_script("arguments[0].scrollIntoView();", last_visible_row)
-            # self.sleep(1)  # Add a short delay to allow scrolling to complete
-
-            # Extract the necessary data for comparison
-            first_row_name = visible_rows[0].find_element(By.XPATH, "./td[1]").text
-            last_row_name = last_visible_row.find_element(By.XPATH, "./td[1]").text
-
-            # Assert that the first row's name is less than or equal to the last row's name
-            assert first_row_name <= last_row_name, "Sorting order is incorrect"
-
-        else:
-            # Ha    ndle case where no rows are visible after sorting
-            raise AssertionError("No visible rows found after sorting")
-        
+        self.sorting_helper("Name", "#nadmin-users tbody tr")
         self.sleep(3)
+        self.sorting_helper("Username", "#nadmin-users tbody tr")
 
 
     #>>>>>>>>>>>>>>>>>>>>> ONPREM ABILITIES <<<<<<<<<<<<<<<<<<<
@@ -268,10 +238,10 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(5)
 
 
-    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM ROLE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM ROLE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # def test_role(self):
-        onprem_data = self.generate_fake_onprem_data()
-        self.onprem_user_nav()
+    #     onprem_data = self.generate_fake_onprem_data()
+        # self.onprem_user_nav()
 
         # TEST ERRORS
         self.click(self.ROLE)
@@ -279,7 +249,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.click(self.ADD_BTN)
         self.type(self.ROLE_NAME, "Test")
         self.click(self.SUBMIT)
-        self.sleep(2)
+        self.sleep(3)
 
         self.assert_element(self.ERRORS)  # Ensure errors element is present
 
@@ -299,10 +269,11 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         self.click(self.SUBMIT)
         self.assert_text("Role created successfully!", "h2")
-        self.sleep(2)
+        self.sleep(4)
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM ROLE: SEARCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # CHECK NO MATCHING RECORD FOUND
+        wait = WebDriverWait(self.driver, 10)
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ROLE_SEARCH)))
         # self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
 
@@ -314,6 +285,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(3)
 
         # TEST SEARCH
+        # Wait for the search input to be visible and interactable
         search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ROLE_SEARCH)))
         self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ROLE_SEARCH)))
@@ -343,6 +315,11 @@ class WarehouseUserTest(LoginPage, UserPage):
 
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM ROLE: EDIT TR1 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+        # self.scroll_up_header()
+        # Locate the dropdown toggle button
+        # Use WebDriverWait to wait for the element to be present and visible
+        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ROLE_TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -374,6 +351,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         dropdown_toggle_xpath = self.ROLE_TR1
 
         # Use WebDriverWait to wait for the element to be present and visible
+        wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ROLE_TR1)))
 
         # Click the dropdown toggle button to open the dropdown menu    
@@ -459,4 +437,7 @@ class WarehouseUserTest(LoginPage, UserPage):
             # Scroll back up to the top of the page for the next iteration
             self.driver.execute_script("window.scrollTo(0, 0);")
             self.sleep(1)  # Add a short delay to ensure scrolling is complete
-        self.sleep(3)
+        self.sleep(5)
+
+        # >>>>>>>>>>>>>>>> ONPREM ROLE: SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<
+        self.sorting_helper("Name", "#nadmin-roles tbody tr")

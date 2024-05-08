@@ -3,7 +3,7 @@ from page_objects.user import UserPage
 from page_objects.setting import SettingPage
 from selenium.webdriver.support import expected_conditions as EC
 
-class WarehouseUserTest(LoginPage, UserPage, SettingPage):
+class SettingTest(LoginPage, UserPage, SettingPage):
     def setUp(self):
         super().setUp()
         print("Running setup before test")
