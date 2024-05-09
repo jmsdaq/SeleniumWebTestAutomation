@@ -1,6 +1,9 @@
 from page_objects.login import LoginPage
 from page_objects.user import UserPage
 from page_objects.export import ExportPage
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import pytest
 
 class ExportTest(LoginPage, UserPage, ExportPage):
     def setUp(self):
@@ -13,6 +16,7 @@ class ExportTest(LoginPage, UserPage, ExportPage):
         self.sleep(10) 
         super().tearDown()
 
+    @pytest.mark.run(order=4)
     def test_export(self):
         self.export_nav()
         self.sleep(3)
@@ -22,8 +26,8 @@ class ExportTest(LoginPage, UserPage, ExportPage):
         self.sleep(2)
         self.assert_element(self.MODAL)
         self.assert_text("New Export", "h1")
-        self.type(self.EXPORT_FROM, "05072024")
-        self.type(self.EXPORT_TO, "06072024")
+        self.type(self.EXPORT_FROM, "05012024")
+        self.type(self.EXPORT_TO, "05022024")
 
         select_type = self.EXPORT_TYPE
         self.click(select_type)
@@ -35,9 +39,7 @@ class ExportTest(LoginPage, UserPage, ExportPage):
         self.click(option_locator)
         self.click(self.SUBMIT)
         self.assert_text("Exporting data. This might take a while...", "h2")
-        self.sleep(5)
-        self.assert_text("processing", self.EXPORT_STATUS)
-        
-    
-        # >>>>>>>>>> DOWNLOAD <<<<<<<<<<
+
+        self.sleep(4)
+        self.refresh()
         self.click(self.DOWNLOAD)

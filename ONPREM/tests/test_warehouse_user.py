@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import StaleElementReferenceException
+import pytest
 import os
 
 class WarehouseUserTest(LoginPage, UserPage):
@@ -20,6 +21,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         super().tearDown()
 
     # >>>>>>>>>>>>>>>>>>>>> NAVIGATION TO WAREHOUSE USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<
+    @pytest.mark.run(order=1)
     def test_warehouse_user(self):
         self.warehouse_nav()
     
@@ -146,8 +148,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         dropdown_menu_xpath = f'//*[@id="app-users"]/tbody/tr[1]/td[8]/div/div[@class="dropdown-menu show"]'
         dropdown_menu = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, dropdown_menu_xpath)))
 
-        # Locate the "Edit" and "Delete" links within the dropdown menu
-        # edit_link = self.element(f'{dropdown_menu} a.dropdown-item[text()="Edit"]')
         edit_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Edit")]')
 
         # Click the "Edit" link

@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import StaleElementReferenceException
+import pytest
 import os
 
 class OnpremUserTest(LoginPage, UserPage):
@@ -20,6 +21,7 @@ class OnpremUserTest(LoginPage, UserPage):
         super().tearDown()
 
     # >>>>>>>>>>>>>>>>>>>>> NAVIGATION TO ONPREM USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<
+    @pytest.mark.run(order=2)
     def test_warehouse_user(self):
         self.onprem_user_nav()
     

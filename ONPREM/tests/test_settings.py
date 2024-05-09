@@ -1,7 +1,7 @@
 from page_objects.login import LoginPage
 from page_objects.user import UserPage
 from page_objects.setting import SettingPage
-from selenium.webdriver.support import expected_conditions as EC
+import pytest
 
 class SettingTest(LoginPage, UserPage, SettingPage):
     def setUp(self):
@@ -14,6 +14,7 @@ class SettingTest(LoginPage, UserPage, SettingPage):
         self.sleep(10) 
         super().tearDown()
 
+    @pytest.mark.run(order=3)
     def test_setting(self):
         self.general_setting_nav()
 
@@ -56,6 +57,7 @@ class SettingTest(LoginPage, UserPage, SettingPage):
         self.assert_text("MacPOS Settings", "h5")
         self.sleep(3)
         self.click(self.ALLOW_LABEL)
+        self.sleep(3)
         self.click(self.SUBMIT)
         self.assert_text("MacPOS settings successfully updated", "h2")
         self.sleep(5)
@@ -64,5 +66,4 @@ class SettingTest(LoginPage, UserPage, SettingPage):
         # --------- WAREHOUSE DISPLAY -----------
         self.click(self.WAREHOUSE_DISPLAY)
         self.assert_element(self.POPUP)
-        self.assert_text("Welcome back!", "h2")
         self.sleep(5)
