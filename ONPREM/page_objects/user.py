@@ -42,15 +42,14 @@ class UserPage(BaseCase):
 
     # SHOW ENTRIES LOCATORS
     SHOW = "select[name='app-users_length']"
-
-
     TR1 = '//*[@id="app-users"]/tbody/tr[1]/td[8]/div'
 
     # EDIT LOCATORS
     EDIT_MODAL_TITLE = ".modal-title fs-5"
     UPDATE_BTN = 'input[type="submit"][value="Update User"]'
 
-    # ONPREM: USER LOCATORS
+
+    # ----------------ONPREM: USER LOCATORS --------------------
     ONPREM_MENU = 'a[data-sidebars-target="menu"][href="/nadmin/users"]'
     CARD_TITLE = '.card-title'
     DANGER = 'div.text-danger'
@@ -144,6 +143,38 @@ class UserPage(BaseCase):
         }
         return onprem_data
         
+    def show_entries_helper(self, tr_selector, css_selector):
+        select_element = self.find_element(tr_selector)
+        # Define a list of option values to test, including "-1" for "All" option
+        option_values = ["10", "50", "100", "-1"]
+        for option_value in option_values:
+            # Click the 'Show Entries' dropdown and select the current option value
+            select_element.click()
+            self.click(f"option[value='{option_value}']")
+            self.sleep(3)
+
+            # Scroll down to the bottom of the page to load all content
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            self.sleep(2)  # Add a short delay to ensure the content is fully loaded
+
+            self.wait_for_element(css_selector)
+            table_rows = self.find_elements(css_selector)
+
+            # Determine the expected number of rows based on the selected option value
+            if option_value == "-1":
+                expected_row_count = len(table_rows)  # All rows should be displayed
+            else:
+                expected_row_count = int(option_value)  # Convert to integer
+            actual_row_count = len(table_rows)
+            
+            assert actual_row_count <= expected_row_count, (
+                f"Expected {expected_row_count} rows or fewer, but found {actual_row_count} rows for option value '{option_value}'"
+            )
+            # Scroll back up to the top of the page for the next iteration
+            self.driver.execute_script("window.scrollTo(0, 0);")
+            self.sleep(1)  # Add a short delay to ensure scrolling is complete
+            
+
     def sorting_helper(self, column_name, css_selector):
         # Click the column header to trigger sorting
         column_header = self.find_element(By.XPATH, f'//th[contains(text(), "{column_name}")]')
