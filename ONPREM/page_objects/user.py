@@ -118,6 +118,10 @@ class UserPage(BaseCase):
         footer_element = self.find_element(".modal-footer")
         self.scroll_with_actions(footer_element)
 
+    def scroll_bottom(self):
+        bottom_element = self.find_element(".navbar fixed-bottom text-end text-muted")
+        self.scroll_with_actions(bottom_element)
+
     def generate_fake_warehouse_data(self):
         faker = Faker()
         wh_data = {
@@ -139,3 +143,23 @@ class UserPage(BaseCase):
             'role': faker.random_element(elements=["admin", "warehouse", "Assistant Admin", "test role", "TestRaj", "Intern"])
         }
         return onprem_data
+        
+    def sorting_helper(self, column_name, css_selector):
+        # Click the column header to trigger sorting
+        column_header = self.find_element(By.XPATH, f'//th[contains(text(), "{column_name}")]')
+        column_header.click()
+
+        # Wait for the table content to reload after sorting (adjust timeout as needed)
+        wait = WebDriverWait(self.driver, 3)  # Adjust timeout as needed
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, css_selector)))
+
+        # Find all visible rows in the table
+        visible_rows = self.find_elements(css_selector)
+
+        # Assert the sorting order
+        if visible_rows:
+            first_row_value = visible_rows[0].find_element(By.XPATH, f"./td[1]").text
+            last_row_value = visible_rows[-1].find_element(By.XPATH, f"./td[1]").text
+            assert first_row_value <= last_row_value, f"Sorting order for column '{column_name}' is incorrect"
+        else:
+            raise AssertionError("No visible rows found after sorting")

@@ -6,7 +6,10 @@ class ExportPage(BaseCase):
     EXPORT_TO = 'input#exported_csv_to'
     EXPORT_TYPE = 'select#exported_csv_export_type'
     EXPORT_STATUS = '//*[@id="exported-csvs"]/tbody/tr[1]/td[3]/span'
-    DOWNLOAD = '//*[@id="exported-csvs"]/tbody/tr[2]/td[8]/a'
+    DOWNLOAD = '//*[@id="exported-csvs"]/tbody/tr[1]/td[8]/a'
+    TR1_STATUS = '//*[@id="exported-csvs"]/tbody/tr[1]/td[3]/span'
+    PROCESSING = ".badge badge-style-light badge-warning"
+    COMPLETED = ".badge badge-style-light badge-success"
 
     def export_nav(self):
         self.wait_for_element(self.SIDEBAR_ACTIVE)

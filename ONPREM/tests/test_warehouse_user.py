@@ -173,6 +173,7 @@ class WarehouseUserTest(LoginPage, UserPage):
     #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # def test_delete(self):
     #     self.warehouse_nav()
+    
         # Perform assertions
         self.scroll_to(self.TR1)
         dropdown_toggle_xpath = self.TR1
@@ -214,43 +215,8 @@ class WarehouseUserTest(LoginPage, UserPage):
     # def test_sort(self):
     #     self.warehouse_nav()
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        select_element = self.find_element(self.SHOW)
-        # Define a list of option values to test, including "-1" for "All" option
-        option_values = ["10", "50", "100", "-1"]
-        for option_value in option_values:
-            # Click the 'Show Entries' dropdown and select the current option value
-            select_element.click()
-            self.click(f"option[value='{option_value}']")
-            self.sleep(3)
-
-            # Scroll down to the bottom of the page to load all content
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            self.sleep(2)  # Add a short delay to ensure the content is fully loaded
-
-            # Wait for the table content to load after scrolling (adjust timeout as needed)
-            self.wait_for_element("#app-users tbody tr")
-
-            # Find all table rows within the table body
-            table_rows = self.find_elements("#app-users tbody tr")
-
-            # Determine the expected number of rows based on the selected option value
-            if option_value == "-1":
-                expected_row_count = len(table_rows)  # All rows should be displayed
-            else:
-                expected_row_count = int(option_value)  # Convert to integer
-
-            # Get the actual number of rows displayed on the page
-            actual_row_count = len(table_rows)
-            
-            # Assert that the actual row count is less than or equal to the expected row count
-            assert actual_row_count <= expected_row_count, (
-                f"Expected {expected_row_count} rows or fewer, but found {actual_row_count} rows for option value '{option_value}'"
-            )
-            # Scroll back up to the top of the page for the next iteration
-            self.driver.execute_script("window.scrollTo(0, 0);")
-            self.sleep(1)  # Add a short delay to ensure scrolling is complete
-        self.sleep(4)
-    
+        self.show_entries_helper(self.SHOW, self.TABLE_ROWS)
+        self.sleep(5)
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  
         self.sorting_helper("Name", "#app-users tbody tr")

@@ -22,7 +22,7 @@ class OnpremUserTest(LoginPage, UserPage):
 
     # >>>>>>>>>>>>>>>>>>>>> NAVIGATION TO ONPREM USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<
     @pytest.mark.run(order=2)
-    def test_warehouse_user(self):
+    def test_onprem_user(self):
         self.onprem_user_nav()
     
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADD ONPREM USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -90,10 +90,7 @@ class OnpremUserTest(LoginPage, UserPage):
         # Wait for the table rows to update based on the search query (wait for presence of table rows)
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, self.ON_TABLE_ROWS)))
 
-        # Get all table rows within the table body
         table_rows = self.driver.find_elements(By.XPATH, '//*[@id="nadmin-users"]/tbody/tr')
-
-        # Assert that the table has more than 0 rows after search
         self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
         self.sleep(3)
 
@@ -136,7 +133,6 @@ class OnpremUserTest(LoginPage, UserPage):
     #     self.warehouse_nav()
         # Perform assertions 
         self.scroll_to(self.ON_TR1)
-        dropdown_toggle_xpath = self.ON_TR1
 
         # Use WebDriverWait to wait for the element to be present and visible
         wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
@@ -173,58 +169,7 @@ class OnpremUserTest(LoginPage, UserPage):
 
 
         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM USER: SHOW ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        select_element = self.find_element(self.ON_SHOW)
-        # Define a list of option values to test, including "-1" for "All" option
-        option_values = ["10", "50", "100", "-1"]
-        for option_value in option_values:
-            # Click the 'Show Entries' dropdown and select the current option value
-            select_element.click()
-            self.click(f"option[value='{option_value}']")
-            self.sleep(3)
-
-            # Scroll down to the bottom of the page to load all content
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            self.sleep(2)  # Add a short delay to ensure the content is fully loaded
-
-            # Wait for the table content to load after scrolling (adjust timeout as needed)
-            self.wait_for_element("#nadmin-users tbody tr")
-
-            # Find all table rows within the table body
-            table_rows = self.find_elements("#nadmin-users tbody tr")
-
-            # Determine the expected number of rows based on the selected option value
-            if option_value == "-1":
-                expected_row_count = len(table_rows)  # All rows should be displayed
-            else:
-                expected_row_count = int(option_value)  # Convert to integer
-
-            # Get the actual number of rows displayed on the page
-            actual_row_count = len(table_rows)
-
-            # Assert that the actual row count is less than or equal to the expected row count
-            assert actual_row_count <= expected_row_count, (
-                f"Expected {expected_row_count} rows or fewer, but found {actual_row_count} rows for option value '{option_value}'"
-            )
-
-            # Get the text of the element indicating the number of entries shown
-            entries_info = self.find_element("#nadmin-users_info").text
-
-            # Extract the numbers indicating the range of entries shown
-            shown_entries = [int(s) for s in entries_info.split() if s.isdigit()]
-
-            # Extract the expected upper limit of the range based on the selected option value
-            expected_upper_limit = min(expected_row_count, actual_row_count)
-
-            # Check if the displayed range matches the selected option value
-            assert shown_entries[:2] == [1, expected_upper_limit], (
-                f"Expected to show 1 to {expected_upper_limit} entries, "
-                f"but found {entries_info}"
-            )
-
-            # Scroll back up to the top of the page for the next iteration
-            self.driver.execute_script("window.scrollTo(0, 0);")
-            self.sleep(1)  # Add a short delay to ensure scrolling is complete
-        self.sleep(3)
+        self.show_entries_helper(self.ON_SHOW, self.ON_TABLE_ROWS)
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM USER: SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     # def test_sorting_table_column(self):
@@ -305,7 +250,6 @@ class OnpremUserTest(LoginPage, UserPage):
         self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
         self.sleep(3)
 
-
         self.click(self.ROLE_ABILITIES)
         self.assert_element(self.MODAL)
         expected_title = name
@@ -320,7 +264,6 @@ class OnpremUserTest(LoginPage, UserPage):
 
         # self.scroll_up_header()
         # Locate the dropdown toggle button
-        # Use WebDriverWait to wait for the element to be present and visible
         wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.ROLE_TR1)))
 
@@ -332,14 +275,9 @@ class OnpremUserTest(LoginPage, UserPage):
         dropdown_menu_xpath = f'//*[@id="nadmin-roles"]/tbody/tr[1]/td[5]/div'
         dropdown_menu = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, dropdown_menu_xpath)))
 
-        # Locate the "Edit" and "Delete" links within the dropdown menu
-        # edit_link = self.element(f'{dropdown_menu} a.dropdown-item[text()="Edit"]')
         edit_link = dropdown_menu.find_element(By.XPATH, './/a[contains(@class, "dropdown-item") and contains(text(), "Edit")]')
 
-        # Click the "Edit" link
         edit_link.click()
-        # self.wait_for_element(self.CARD _TITLE)
-        # self.scroll_up()
         self.assert_text("Edit Role", "h1")
         self.type(self.ROLE_DESC, "Test edit")
         self.click(self.SUBMIT)
@@ -350,7 +288,6 @@ class OnpremUserTest(LoginPage, UserPage):
         #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM ROLE: DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # Perform assertions 
         self.scroll_to(self.ROLE_TR1)
-        dropdown_toggle_xpath = self.ROLE_TR1
 
         # Use WebDriverWait to wait for the element to be present and visible
         wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
@@ -388,57 +325,7 @@ class OnpremUserTest(LoginPage, UserPage):
 
 
         # >>>>>>>>>>>>>>>>>>>>>> ONPREM ROLES: SHOW ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<
-        select_element = self.find_element(self.ROLE_SHOW)
-        # Define a list of option values to test, including "-1" for "All" option
-        option_values = ["10", "50", "100", "-1"]
-        for option_value in option_values:
-            # Click the 'Show Entries' dropdown and select the current option value
-            select_element.click()
-            self.click(f"option[value='{option_value}']")
-            self.sleep(3)
-
-            # Scroll down to the bottom of the page to load all content
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            self.sleep(2)  # Add a short delay to ensure the content is fully loaded
-
-            # Wait for the table content to load after scrolling (adjust timeout as needed)
-            self.wait_for_element("#nadmin-roles tbody tr")
-
-            # Find all table rows within the table body
-            table_rows = self.find_elements("#nadmin-roles tbody tr")
-
-            # Determine the expected number of rows based on the selected option value
-            if option_value == "-1":
-                expected_row_count = len(table_rows)  # All rows should be displayed
-            else:
-                expected_row_count = int(option_value)  # Convert to integer
-
-            # Get the actual number of rows displayed on the page
-            actual_row_count = len(table_rows)
-
-            # Assert that the actual row count is less than or equal to the expected row count
-            assert actual_row_count <= expected_row_count, (
-                f"Expected {expected_row_count} rows or fewer, but found {actual_row_count} rows for option value '{option_value}'"
-            )
-
-            # Get the text of the element indicating the number of entries shown
-            entries_info = self.find_element("#nadmin-roles_info").text
-
-            # Extract the numbers indicating the range of entries shown
-            shown_entries = [int(s) for s in entries_info.split() if s.isdigit()]
-
-            # Extract the expected upper limit of the range based on the selected option value
-            expected_upper_limit = min(expected_row_count, actual_row_count)
-
-            # Check if the displayed range matches the selected option value
-            assert shown_entries[:2] == [1, expected_upper_limit], (
-                f"Expected to show 1 to {expected_upper_limit} entries, "
-                f"but found {entries_info}"
-            )
-
-            # Scroll back up to the top of the page for the next iteration
-            self.driver.execute_script("window.scrollTo(0, 0);")
-            self.sleep(1)  # Add a short delay to ensure scrolling is complete
+        self.show_entries_helper(self.ROLE_SHOW, self.ROLE_TABLE_ROWS)
         self.sleep(5)
 
         # >>>>>>>>>>>>>>>> ONPREM ROLE: SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<
