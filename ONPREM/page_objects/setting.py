@@ -36,6 +36,9 @@ class SettingPage(BaseCase):
 
     # NOTIF_UPDATE = "//form[@action='/nadmin/settings/update_new_order_notification_config']/dl/dd/input[@type='submit']"
     # QR_UPDATE = "//form[@action='/nadmin/settings/update_qrcode_in_pdf_config']/dl/dd/input[@type='submit']"
+    TRANSACTION = '//a[contains(text(), "Transaction")]'
+    ORDER_MENU = "a[data-sidebars-target='menu'][href='/nadmin/macpos/orders']"
+    O_TR1 = '//*[@id="macpos-orders"]/tbody/tr[1]/td[3]/div/a/span'
 
     def setting_nav(self):
         self.wait_for_element(self.SIDEBAR_ACTIVE)
@@ -67,5 +70,3 @@ class SettingPage(BaseCase):
     def scroll_bottom(self):
         bottom_element = self.find_element(self.LOCAL_IMAGE_UPDATE)
         self.scroll_with_actions(bottom_element)
-
-    

@@ -1,6 +1,7 @@
 from page_objects.login import LoginPage
 from page_objects.user import UserPage
 from page_objects.setting import SettingPage
+from selenium.webdriver.common.by import By
 import pytest
 
 class SettingTest(LoginPage, UserPage, SettingPage):
@@ -34,13 +35,25 @@ class SettingTest(LoginPage, UserPage, SettingPage):
         self.click(self.APP_ID)
         self.click(self.IMAGE_CONF)
         self.click(self.LOCAL_IMAGE_UPDATE)
-        self.assert_text("Settings has been updated", self.POPUP)
+        self.assert_text("Settings has been updated", "h2")
         self.sleep(3)
 
         self.click(self.PENDING_CONF)
         self.click(self.PENDING_UPDATE)
-        self.assert_text("Settings has been updated", self.POPUP)
+        self.assert_text("Settings has been updated", "h2")
+        self.sleep(4)
+
+
+        self.click(self.TRANSACTION)
+        self.sleep(2)
+        self.wait_for_element(self.ORDER_MENU)
+        # self.open_tab(self.ORDER_MENU)
+        self.click(self.ORDER_MENU)
         self.sleep(5)
+        self.click(self.O_TR1)
+        self.assert_text("Order is not linked yet", "h2")
+        self.sleep(3)
+        self.setting_nav()
 
         # self.click(self.NOTIF_CONF)
         # self.click(self.NOTIF_UPDATE)
@@ -65,5 +78,8 @@ class SettingTest(LoginPage, UserPage, SettingPage):
 
         # --------- WAREHOUSE DISPLAY -----------
         self.click(self.WAREHOUSE_DISPLAY)
-        self.assert_element(self.POPUP)
+        self.assert_text("Welcome back!", "h2")
+        # Assertion: Check if URL contains "/nadmin/dashboard" path
+        expected_path = "/nadmin/dashboard"
+        assert expected_path in self.get_current_url(), f"Actual URL: {self.get_current_url()}"
         self.sleep(5)
