@@ -4,6 +4,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 from faker import Faker
 import random
 
@@ -13,7 +14,7 @@ class UserPage(BaseCase):
     SIDEBAR_ACTIVE = ".app-sidebar"
     USER_MENU = "//a[contains(text(), 'Users')]"
     WAREHOUSE_MENU = "a[data-sidebars-target='menu'][href='/nadmin/app_users']"
-
+    
     # ADD FORM LOCALTORS
     MODAL = "#appModalContent"
     ADD_BTN = ".btn.btn-success"
@@ -34,7 +35,8 @@ class UserPage(BaseCase):
     # SEARCH LOCATORS
     SEARCH = 'input[type="search"][aria-controls="app-users"]'
     TABLE = ".dataTables_wrapper no-footer"
-    TABLE_ROWS = '#app-users tbody tr'
+    S_TRS = '#app-users tbody tr'
+    TR_XPATH = '//*[@id="app-users"]/tbody/tr'
     EMPTY_TABLE = ".dataTables_empty"
     AVATAR = '//*[@id="app-users"]/tbody/tr/td[2]'
     CHOOSE_IMG = "#user_image_url"
@@ -60,7 +62,8 @@ class UserPage(BaseCase):
     ON_ROLE = '#nadmin_user_role_id'
     ON_SEARCH = 'input[type="search"][aria-controls="nadmin-users"]'
     ON_SHOW = "select[name='nadmin-users_length']"
-    ON_TABLE_ROWS = '#nadmin-users tbody tr'
+    S_ON_TRS = '#nadmin-users tbody tr'
+    ON_TR_XPATH = '//*[@id="nadmin-users"]/tbody/tr'
     ON_TR1 = '//*[@id="nadmin-users"]/tbody/tr[1]/td[6]/div'
 
     # ONPREM: ABILITIES LOCATORS
@@ -71,12 +74,12 @@ class UserPage(BaseCase):
     ROLE_NAME = "#nadmin_role_name"
     ROLE_DESC = "#nadmin_role_description"
     ROLE_SEARCH = 'input[type="search"][aria-controls="nadmin-roles"]'
-    ROLE_TABLE_ROWS = '#nadmin-roles tbody tr'
+    S_ROLE_TRS = '#nadmin-roles tbody tr'
+    ROLE_TR_XPATH = '//*[@id="nadmin-roles"]/tbody/tr'
     ROLE_ABILITIES = '//*[@id="nadmin-roles"]/tbody/tr[1]/td[4]/a'
     ROLE_TR1 = '//*[@id="nadmin-roles"]/tbody/tr[1]/td[5]/div'
     ROLE_SHOW = "select[name='nadmin-roles_length']"
     ROLE_TR1_ABILITIES = '//*[@id="nadmin-roles"]/tbody/tr[1]/td[4]/a'
-    
 
     def user_nav(self):
         self.wait_for_element(self.SIDEBAR_ACTIVE)
@@ -121,6 +124,13 @@ class UserPage(BaseCase):
         bottom_element = self.find_element(".navbar fixed-bottom text-end text-muted")
         self.scroll_with_actions(bottom_element)
 
+    def clear_search(self, css_selector):
+        search_input = self.find_element(css_selector)
+        search_input.send_keys(Keys.CONTROL + 'a')  # Select all text in the input field
+        self.sleep(1)
+        search_input.send_keys(Keys.BACKSPACE)       # Delete the selected text
+        self.sleep(2)
+
     def generate_fake_warehouse_data(self):
         faker = Faker()
         wh_data = {
@@ -142,8 +152,37 @@ class UserPage(BaseCase):
             'role': faker.random_element(elements=["admin", "warehouse", "Assistant Admin", "test role", "TestRaj", "Intern"])
         }
         return onprem_data
-        
+    
+    def search_helper(self, search, sn, trs, trx):
+        # CHECK NO MATCHING RECORD FOUND
+        wait = WebDriverWait(self.driver, 10)
+        search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, search)))
+
+        search_input.send_keys("#")
+        self.sleep(2)
+        empty_message = self.find_element(self.EMPTY_TABLE)
+        self.assertTrue(empty_message.is_displayed(), "No matching records message is not displayed")
+        self.assert_text("No matching records found", "td.dataTables_empty")
+        self.sleep(3)
+
+        # >>>>>>>>>>>>>> TEST MATCH <<<<<<<<<<<<<<<<<<<
+        # Wait for the search input to be visible and interactable
+        wait = WebDriverWait(self.driver, 10)
+        search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, search)))
+        self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, search)))
+
+        search_input.clear()
+        search_input.send_keys(sn)
+        # # Wait for the table rows to update based on the search query (wait for presence of table rows)
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, trs)))
+
+        table_rows = self.driver.find_elements(By.XPATH, trx)
+        self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
+        self.sleep(3)
+
     def show_entries_helper(self, tr_selector, css_selector):
+                # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         select_element = self.find_element(tr_selector)
         # Define a list of option values to test, including "-1" for "All" option
         option_values = ["10", "50", "100", "-1"]

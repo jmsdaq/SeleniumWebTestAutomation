@@ -3,6 +3,8 @@ from page_objects.user import UserPage
 from page_objects.export import ExportPage
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import pytest
 
 class ExportTest(LoginPage, UserPage, ExportPage):
@@ -22,7 +24,9 @@ class ExportTest(LoginPage, UserPage, ExportPage):
         self.sleep(3)
 
         # >>>>>>>>>> ADD NEW EXPORT <<<<<<<<<<
-        self.click(self.ADD_BTN)
+        wait = WebDriverWait(self.driver, 10)
+        add_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ADD_BTN)))
+        add_btn.click()
         self.sleep(2)
         self.assert_element(self.MODAL)
         self.assert_text("New Export", "h1")

@@ -6,8 +6,8 @@ class ExportPage(BaseCase):
     EXPORT_TO = 'input#exported_csv_to'
     EXPORT_TYPE = 'select#exported_csv_export_type'
     EXPORT_STATUS = '//*[@id="exported-csvs"]/tbody/tr[1]/td[3]/span'
+    TR1_STATS = "//table[@id='exported-csvs']"
     DOWNLOAD = '//*[@id="exported-csvs"]/tbody/tr[1]/td[8]/a'
-    TR1_STATUS = '//*[@id="exported-csvs"]/tbody/tr[1]/td[3]/span'
     PROCESSING = ".badge badge-style-light badge-warning"
     COMPLETED = ".badge badge-style-light badge-success"
 

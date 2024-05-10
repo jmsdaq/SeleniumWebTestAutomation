@@ -20,16 +20,12 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.sleep(10) 
         super().tearDown()
 
-    # >>>>>>>>>>>>>>>>>>>>> NAVIGATION TO WAREHOUSE USER WITHIN USER MENU <<<<<<<<<<<<<<<<<<<<<<<<
+    # >>>>>>>> NAVIGATION TO WAREHOUSE USER WITHIN USER MENU <<<<<<<<<<<<<
     @pytest.mark.run(order=1)
     def test_warehouse_user(self):
         self.warehouse_nav()
     
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ADD WAREHOUSE USER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # def test_other(self):
-        # CLICK CLOSE ICON
-        # self.wait_for_element(self.ADD_BTN)
-
+        # >>>>>>>>>>>>> ADD WAREHOUSE USER <<<<<<<<<<<<<<<<
         wait = WebDriverWait(self.driver, 10)
         add_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.ADD_BTN)))
         add_btn.click()
@@ -61,7 +57,6 @@ class WarehouseUserTest(LoginPage, UserPage):
         wh_data = self.generate_fake_warehouse_data()
 
         # Fill in the form fields with generated fake data
-        # self.type(self.NAME, user_data['name'])
         self.type(self.NAME, "intern_james")
         self.type(self.EMPLOYEE_CODE, str(wh_data['employee_code']))
         username = wh_data['username']  # Store the generated username
@@ -76,48 +71,15 @@ class WarehouseUserTest(LoginPage, UserPage):
         # Print the generated username
         print("Generated Username:", username)
 
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SEARCH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        # CHECK NO MATCHING RECORD FOUND
-        wait = WebDriverWait(self.driver, 10)
-        search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
-        # self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
+        # >>>>>>>>>>>>>>> SEARCH <<<<<<<<<<<<<<<<<<<
+        self.search_helper(self.SEARCH, username, self.S_TRS, self.TR_XPATH)
 
-        search_input.send_keys("#")
-        self.sleep(2)
-        empty_message = self.find_element(self.EMPTY_TABLE)
-        self.assertTrue(empty_message.is_displayed(), "No matching records message is not displayed")
-        self.assert_text("No matching records found", "td.dataTables_empty")
-        self.sleep(3)
-
-        # TEST SEARCH
-        # Wait for the search input to be visible and interactable
-        wait = WebDriverWait(self.driver, 10)
-        search_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
-        self.driver.execute_script("arguments[0].scrollIntoView();", search_input)
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.SEARCH)))
-
-        search_input.clear()
-        search_input.send_keys(username)
-
-        # Wait for the table rows to update based on the search query (wait for presence of table rows)
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, self.TABLE_ROWS)))
-
-        # Get all table rows within the table body
-        table_rows = self.driver.find_elements(By.XPATH, '//*[@id="app-users"]/tbody/tr')
-
-        # Assert that the table has more than 0 rows after search
-        self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
-        self.sleep(3)
-
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> UPDATE USER'S AVATAR <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        # >>>>>>>>>>>>>> UPDATE USER'S AVATAR <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         # Construct the absolute path to the file
         current_dir = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.abspath(os.path.join(current_dir, '..', 'data', 'avatar.jpg'))
         self.click(self.AVATAR)
         self.wait_for_element_visible(self.MODAL)
-
-        # Wait for the file upload input to be clickable
-        wait = WebDriverWait(self.driver, 10)
         upload_input = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, self.CHOOSE_IMG)))
         
         # Upload the file using JavaScript to set the file path directly
@@ -128,15 +90,10 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.click(self.SUBMIT)
         self.assert_text("User picture has been updated successfully!", self.POPUP)
 
-
-
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # def test_edit(self):
-        # self.test_warehouse_users()
-
+        # >>>>>>>>>>>>>>>> EDIT TABLE ROW <<<<<<<<<<<<<<<<<<<<
         self.scroll_up_header()
+
         # Locate the dropdown toggle button
-        # Use WebDriverWait to wait for the element to be present and visible
         wait = WebDriverWait(self.driver, 10)  # Adjust timeout as needed
         dropdown_toggle = wait.until(EC.visibility_of_element_located((By.XPATH, self.TR1)))
 
@@ -157,23 +114,12 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.scroll_down()
         self.select_option_by_text(self.OPERATIONAL_ROLE, wh_data['operation_role'])
         self.sleep(2)
-
-        # Wait until the option is selected
-        # WebDriverWait(self.driver, 10).until(EC.text_to_be_present_in_element_value((By.XPATH, self.OPERATIONAL_ROLE), wh_data['operation_role']))
-
         self.scroll_to(self.UPDATE_BTN)
         self.click(self.UPDATE_BTN)
-
-        # Wait for the success message to appear
-        # self.wait_for_text_visible("User picture has been updated successfully!", self.POPUP)
         self.assert_text("App user updated successfully!", self.POPUP)
         self.sleep(3)
 
-
-    #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DELETE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # def test_delete(self):
-    #     self.warehouse_nav()
-    
+        #>>>>>>>>>>>>>>>>>>>>> DELETE <<<<<<<<<<<<<<<<<<<<<<<<
         # Perform assertions
         self.scroll_to(self.TR1)
         dropdown_toggle_xpath = self.TR1
@@ -194,9 +140,10 @@ class WarehouseUserTest(LoginPage, UserPage):
         delete_link.click()
         
         WebDriverWait(self.driver, 5).until(EC.alert_is_present())
-        alert = self.driver.switch_to.alert     # Switch to the alert dialog
-        dialog_text = alert.text    # Retrieve the text of the confirmation dialog
+        alert = self.driver.switch_to.alert  
+        dialog_text = alert.text
         self.sleep(3)
+
         # Assert or check the text of the confirmation dialog
         expected_text = "Delete user?"
         assert expected_text in dialog_text
@@ -204,21 +151,14 @@ class WarehouseUserTest(LoginPage, UserPage):
         alert.accept()
         self.assert_element_visible(self.POPUP)
         self.sleep(3)
-        
-        search_input = self.find_element(self.SEARCH)
-        search_input.send_keys(Keys.CONTROL + 'a')  # Select all text in the input field
-        self.sleep(1)
-        search_input.send_keys(Keys.BACKSPACE)       # Delete the selected text
+        self.clear_search(self.SEARCH)
         self.sleep(2)
 
-
-    # def test_sort(self):
-    #     self.warehouse_nav()
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        self.show_entries_helper(self.SHOW, self.TABLE_ROWS)
+        # >>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<
+        self.show_entries_helper(self.SHOW, self.S_TRS)
         self.sleep(5)
 
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  
-        self.sorting_helper("Name", "#app-users tbody tr")
+        # >>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<
+        self.sorting_helper("Name", self.S_TRS)
         self.sleep(5)
-        self.sorting_helper("Username", "#app-users tbody tr")
+        self.sorting_helper("Username", self.S_TRS)
