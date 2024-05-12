@@ -50,6 +50,7 @@ class SettingTest(LoginPage, UserPage, SettingPage):
         # self.open_tab(self.ORDER_MENU)
         self.click(self.ORDER_MENU)
         self.sleep(5)
+        self.select_date()
         self.click(self.O_TR1)
         self.assert_text("Order is not linked yet", "h2")
         self.sleep(3)

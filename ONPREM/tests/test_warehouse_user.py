@@ -160,5 +160,5 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # >>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<
         self.sorting_helper("Name", self.S_TRS)
-        self.sleep(5)
+        self.sleep(4)
         self.sorting_helper("Username", self.S_TRS)

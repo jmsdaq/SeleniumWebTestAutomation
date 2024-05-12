@@ -110,6 +110,7 @@ class OnpremUserTest(LoginPage, UserPage):
         # Assert or check the text of the confirmation dialog
         expected_text = "Delete user?"
         assert expected_text in dialog_text
+        self.sleep(2)
 
         alert.accept()
         self.assert_element_visible(self.POPUP)
@@ -117,12 +118,12 @@ class OnpremUserTest(LoginPage, UserPage):
         self.sleep(4)
         self.clear_search(self.ON_SEARCH)
 
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM USER: SHOW ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        # >>>>>>>>> ONPREM USER: SHOW ENTRIES <<<<<<<<<<<<<<
         self.show_entries_helper(self.ON_SHOW, self.S_ON_TRS)
 
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ONPREM USER: SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        # >>>>>> ONPREM USER: SORTING TABLE COLUMN <<<<<<<<<<
         self.sorting_helper("Name", self.S_ON_TRS)
-        self.sleep(3)
+        self.sleep(4)
         self.sorting_helper("Username", self.S_ON_TRS)
 
         # >>>>>>>>>>>>>>>>> ONPREM ABILITIES <<<<<<<<<<<<<<<<<<
@@ -223,7 +224,7 @@ class OnpremUserTest(LoginPage, UserPage):
 
         alert.accept()
         self.assert_element(self.EMPTY_TABLE)
-        self.sleep(3)
+        self.sleep(5)
         self.clear_search(self.ROLE_SEARCH)
 
         # >>>>>>>>>>>>>>> ONPREM ROLES: SHOW ENTRIES <<<<<<<<<<<<<<<<<<<<<
@@ -232,3 +233,4 @@ class OnpremUserTest(LoginPage, UserPage):
 
         # >>>>>>>>>>>>>>>> ONPREM ROLE: SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<
         self.sorting_helper("Name", self.S_ROLE_TRS)
+        self.sleep(4)

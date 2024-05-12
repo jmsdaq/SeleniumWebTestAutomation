@@ -70,3 +70,11 @@ class SettingPage(BaseCase):
     def scroll_bottom(self):
         bottom_element = self.find_element(self.LOCAL_IMAGE_UPDATE)
         self.scroll_with_actions(bottom_element)
+
+    def select_date(self):
+        self.wait_for_element_visible("select#date")
+        # Click the dropdown to view options (this may not be necessary in all cases)
+        self.click("select#date")
+        # Select the 'Last Month' option from the dropdown
+        self.select_option_by_value("select#date", "lastMonth")
+        self.sleep(4)

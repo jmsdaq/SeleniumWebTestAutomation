@@ -4,6 +4,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 from faker import Faker
 import random
@@ -65,6 +66,7 @@ class UserPage(BaseCase):
     S_ON_TRS = '#nadmin-users tbody tr'
     ON_TR_XPATH = '//*[@id="nadmin-users"]/tbody/tr'
     ON_TR1 = '//*[@id="nadmin-users"]/tbody/tr[1]/td[6]/div'
+    ON_TABLE = "//*[@id='nadmin-users']/tbody"
 
     # ONPREM: ABILITIES LOCATORS
     ABILITIES = "#user-abilities"
@@ -80,6 +82,7 @@ class UserPage(BaseCase):
     ROLE_TR1 = '//*[@id="nadmin-roles"]/tbody/tr[1]/td[5]/div'
     ROLE_SHOW = "select[name='nadmin-roles_length']"
     ROLE_TR1_ABILITIES = '//*[@id="nadmin-roles"]/tbody/tr[1]/td[4]/a'
+    ROLE_TABLE = "//*[@id='nadmin-roles']/tbody"
 
     def user_nav(self):
         self.wait_for_element(self.SIDEBAR_ACTIVE)
@@ -181,6 +184,8 @@ class UserPage(BaseCase):
         self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
         self.sleep(3)
 
+
+        
     def show_entries_helper(self, tr_selector, css_selector):
                 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         select_element = self.find_element(tr_selector)
@@ -190,11 +195,11 @@ class UserPage(BaseCase):
             # Click the 'Show Entries' dropdown and select the current option value
             select_element.click()
             self.click(f"option[value='{option_value}']")
-            self.sleep(3)
+            self.sleep(2)
 
             # Scroll down to the bottom of the page to load all content
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            self.sleep(2)  # Add a short delay to ensure the content is fully loaded
+            self.sleep(1)  # Add a short delay to ensure the content is fully loaded
 
             self.wait_for_element(css_selector)
             table_rows = self.find_elements(css_selector)
@@ -213,18 +218,24 @@ class UserPage(BaseCase):
             self.driver.execute_script("window.scrollTo(0, 0);")
             self.sleep(1)  # Add a short delay to ensure scrolling is complete
             
-
     def sorting_helper(self, column_name, css_selector):
         # Click the column header to trigger sorting
         column_header = self.find_element(By.XPATH, f'//th[contains(text(), "{column_name}")]')
         column_header.click()
 
+        # Refresh the reference to the column header to avoid staleness
+        column_header = self.find_element(By.XPATH, f'//th[contains(text(), "{column_name}")]')
+
         # Wait for the table content to reload after sorting (adjust timeout as needed)
         wait = WebDriverWait(self.driver, 3)  # Adjust timeout as needed
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, css_selector)))
 
-        # Find all visible rows in the table
-        visible_rows = self.find_elements(css_selector)
+        # Refresh the reference to the table rows to avoid staleness
+        try:
+            visible_rows = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, css_selector)))
+        except StaleElementReferenceException:
+            # If stale element exception occurs, refresh the reference again
+            visible_rows = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, css_selector)))
 
         # Assert the sorting order
         if visible_rows:
