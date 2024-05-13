@@ -35,7 +35,7 @@ class OnpremUserTest(LoginPage, UserPage):
         self.type(self.ON_USERNAME, "intern_james")
         self.type(self.ON_PW, "intern_james")
         self.click(self.SUBMIT)
-        self.sleep(2)
+        self.sleep(3)
 
         # TEST ALL ERRORS IN ADDING NEW USER
         self.type(self.ON_USERNAME, "intern_james")
@@ -46,6 +46,7 @@ class OnpremUserTest(LoginPage, UserPage):
 
         self.sleep(2)
         self.assert_element(self.DANGER)
+        self.sleep(2)
 
         # TEST VALID USER DATA
         password = "intern_james"
@@ -123,8 +124,9 @@ class OnpremUserTest(LoginPage, UserPage):
 
         # >>>>>> ONPREM USER: SORTING TABLE COLUMN <<<<<<<<<<
         self.sorting_helper("Name", self.S_ON_TRS)
-        self.sleep(4)
+        self.sleep(3)
         self.sorting_helper("Username", self.S_ON_TRS)
+        self.sleep(5)
 
         # >>>>>>>>>>>>>>>>> ONPREM ABILITIES <<<<<<<<<<<<<<<<<<
         self.click(self.ABILITIES)
@@ -229,7 +231,7 @@ class OnpremUserTest(LoginPage, UserPage):
 
         # >>>>>>>>>>>>>>> ONPREM ROLES: SHOW ENTRIES <<<<<<<<<<<<<<<<<<<<<
         self.show_entries_helper(self.ROLE_SHOW, self.S_ROLE_TRS)
-        self.sleep(5)
+        self.sleep(3)
 
         # >>>>>>>>>>>>>>>> ONPREM ROLE: SORTING TABLE COLUMN <<<<<<<<<<<<<<<<<<<
         self.sorting_helper("Name", self.S_ROLE_TRS)

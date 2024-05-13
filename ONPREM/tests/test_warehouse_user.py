@@ -32,25 +32,28 @@ class WarehouseUserTest(LoginPage, UserPage):
         # self.click(self.ADD_BTN)
         self.wait_for_element(self.MODAL)
         self.click(self.CLOSE_ICON)
-        self.sleep(1)
+        self.sleep(2)
 
         # CLICK THE CLOSE BUTTON
         self.click(self.ADD_BTN)
         self.wait_for_element(self.MODAL)
+        self.sleep(2)
         self.scroll_to(self.CLOSE_BTN) # scroll down method
         self.wait_for_element(self.CLOSE_BTN)
         self.click(self.CLOSE_BTN)
-        self.sleep(1)
+        self.sleep(2)
         
         # TEST ERRORS IN ADDING NEW USER
         self.click(self.ADD_BTN)
         self.wait_for_element(self.MODAL)
         self.type(self.EMPLOYEE_CODE, "test")
+        self.sleep(2)
         self.scroll_down() # scroll down method
         self.click(self.SUBMIT)
         self.scroll_up()
         self.sleep(2)
         self.assert_element(self.ERRORS)  # Ensure errors element is present
+        self.sleep(2)
 
         # TEST VALID INPUT
         # Generate fake user data using the helper method
@@ -66,7 +69,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.select_option_by_text(self.OPERATIONAL_ROLE, wh_data['operation_role'])
         self.click(self.SUBMIT)
         self.assert_text("Warehouse user created successfully!", "h2")
-        self.sleep(2)
+        self.sleep(3)
 
         # Print the generated username
         print("Generated Username:", username)
@@ -87,6 +90,7 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # upload_input.send_keys(file_path)
         upload_input.send_keys(file_path)
+        self.sleep(2)
         self.click(self.SUBMIT)
         self.assert_text("User picture has been updated successfully!", self.POPUP)
 
@@ -109,6 +113,7 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # Click the "Edit" link
         edit_link.click()
+        self.sleep(2)
         self.wait_for_element(self.MODAL)
         self.assert_text("Edit Warehouse User", "h1")
         self.scroll_down()
@@ -130,6 +135,7 @@ class WarehouseUserTest(LoginPage, UserPage):
 
         # Click the dropdown toggle button to open the dropdown menu    
         dropdown_toggle.click()
+        self.sleep(2)
 
         # Wait for the dropdown menu to appear
         dropdown_menu_xpath = f'//*[@id="app-users"]/tbody/tr[1]/td[8]/div/div[@class="dropdown-menu show"]'
@@ -147,6 +153,7 @@ class WarehouseUserTest(LoginPage, UserPage):
         # Assert or check the text of the confirmation dialog
         expected_text = "Delete user?"
         assert expected_text in dialog_text
+        self.sleep(2)
 
         alert.accept()
         self.assert_element_visible(self.POPUP)
@@ -158,7 +165,22 @@ class WarehouseUserTest(LoginPage, UserPage):
         self.show_entries_helper(self.SHOW, self.S_TRS)
         self.sleep(5)
 
+
+    # def test_sort(self):
+    #     self.warehouse_nav()
+    #     self.wait_for_element_visible(self.SHOW)
+    #     self.click(self.SHOW)
+    #     self.select_option_by_value(self.SHOW, "-1")
+    #     self.sleep(2)
         # >>>>>>>>>>> SORTING TABLE COLUMN <<<<<<<<<<<<<<
         self.sorting_helper("Name", self.S_TRS)
-        self.sleep(4)
+        self.sleep(2)
         self.sorting_helper("Username", self.S_TRS)
+        self.sleep(2)
+        self.sorting_helper("Role", self.S_TRS)
+        self.sleep(2)
+        self.sort_date("Created")
+        self.assert_ordered_at(self.CREATED)
+        self.sleep(2)
+        self.sort_date("Updated")
+        self.assert_ordered_at(self.UPDATED)

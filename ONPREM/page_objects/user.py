@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
 from faker import Faker
+from datetime import datetime
 import random
 
 class UserPage(BaseCase):
@@ -32,6 +33,8 @@ class UserPage(BaseCase):
     ERRORS = "#errors"
     FOOTER = ".modal-footer"
     HEADER = ".modal-header"
+    CREATED = "td:nth-child(6)"
+    UPDATED = "td:nth-child(7)"
 
     # SEARCH LOCATORS
     SEARCH = 'input[type="search"][aria-controls="app-users"]'
@@ -67,6 +70,7 @@ class UserPage(BaseCase):
     ON_TR_XPATH = '//*[@id="nadmin-users"]/tbody/tr'
     ON_TR1 = '//*[@id="nadmin-users"]/tbody/tr[1]/td[6]/div'
     ON_TABLE = "//*[@id='nadmin-users']/tbody"
+    ON_CREATED = "td:nth-child(5)"
 
     # ONPREM: ABILITIES LOCATORS
     ABILITIES = "#user-abilities"
@@ -183,11 +187,9 @@ class UserPage(BaseCase):
         table_rows = self.driver.find_elements(By.XPATH, trx)
         self.assertGreater(len(table_rows), 0, "Table does not contain any rows after search.")
         self.sleep(3)
-
-
         
     def show_entries_helper(self, tr_selector, css_selector):
-                # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        # >>>>>>>>>>>>>>>>> SHOWING A SPECIFIC NUMBER OF ENTRIES <<<<<<<<<<<<<<<<<<<<<<<<<<<
         select_element = self.find_element(tr_selector)
         # Define a list of option values to test, including "-1" for "All" option
         option_values = ["10", "50", "100", "-1"]
@@ -244,3 +246,36 @@ class UserPage(BaseCase):
             assert first_row_value <= last_row_value, f"Sorting order for column '{column_name}' is incorrect"
         else:
             raise AssertionError("No visible rows found after sorting")
+        
+
+    def _convert_to_datetime(self, date_str):
+        # Convert date-time string to a datetime object
+        # Adjust the format according to your date-time string (e.g., "04/15/24 04:40:52 PM")
+        date_format = "%m/%d/%y %I:%M:%S %p"
+        return datetime.strptime(date_str, date_format)
+      
+    def assert_ordered_at(self, td_selector):
+        # Find all date elements using the CSS selector for the specific column
+        date_elements = self.find_elements(td_selector)
+        # Extract and store the date-time strings from the elements
+        date_strings = []
+        for element in date_elements:
+            date_text = element.text.strip()
+            date_strings.append(date_text)  # Store the date-time string
+        # Convert date-time strings to datetime objects for comparison
+        date_objects = []
+        for date_str in date_strings:
+            date_obj = self._convert_to_datetime(date_str)
+            date_objects.append(date_obj)
+        # Check if the date objects are in ascending order
+        is_ascending = all(date_objects[i] <= date_objects[i + 1] for i in range(len(date_objects) - 1))
+        # Assert that the date objects are in ascending order
+        self.assertTrue(is_ascending, "Dates are not in ascending order")
+
+    def sort_date(self, column):
+        column_header = self.find_element(By.XPATH, f'//th[contains(text(), "{column}")]')
+        column_header.click()
+
+        # Refresh the reference to the column header to avoid staleness
+        column_header = self.find_element(By.XPATH, f'//th[contains(text(), "{column}")]')
+        self.sleep(2)
